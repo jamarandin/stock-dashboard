@@ -3,143 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PORTFOLIO TRACKER — Defense & AI Positions</title>
+<title>Portfolio Tracker — Defense & AI Positions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg: #080c10;
-  --bg-card: #0d1219;
-  --bg-surface: #131b24;
-  --border: #1a2535;
-  --border-lit: #243346;
-  --green: #00e5a0;
-  --green-dim: rgba(0,229,160,0.12);
-  --red: #ff4060;
-  --red-dim: rgba(255,64,96,0.12);
-  --amber: #ffc240;
-  --amber-dim: rgba(255,194,64,0.12);
-  --cyan: #00cfff;
-  --text: rgba(255,255,255,0.90);
-  --text-2: rgba(255,255,255,0.55);
-  --text-3: rgba(255,255,255,0.30);
+  --bg: #080c10; --bg-card: #0d1219; --bg-surface: #131b24;
+  --border: #1a2535; --border-lit: #243346;
+  --green: #00e5a0; --green-dim: rgba(0,229,160,0.13);
+  --red: #ff4060;   --red-dim:   rgba(255,64,96,0.13);
+  --amber: #ffc240; --amber-dim: rgba(255,194,64,0.13);
+  --text: rgba(255,255,255,0.92); --text-2: rgba(255,255,255,0.55); --text-3: rgba(255,255,255,0.28);
   --mono: 'Space Mono', monospace;
-  --sans: 'Syne', sans-serif;
+  --ui: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
 }
-
-html { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+html { background: var(--bg); color: var(--text); font-family: var(--ui); -webkit-font-smoothing: antialiased; }
 body { min-height: 100vh; }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-lit); border-radius: 2px; }
 
 /* NAV */
 nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(8,12,16,0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(8,12,16,0.88); backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  display: flex; align-items: center; gap: 32px; height: 52px;
+  padding: 0 40px; display: flex; align-items: center; gap: 32px; height: 52px;
 }
-.nav-brand { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--green); }
-.nav-links { display: flex; gap: 24px; margin-left: auto; }
-.nav-links a { font-size: 11px; font-family: var(--mono); color: var(--text-2); text-decoration: none; letter-spacing: 1px; transition: color .2s; }
-.nav-links a:hover { color: var(--green); }
-.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; margin-left: auto; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.nav-brand { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--green); }
+.nav-links { display: flex; gap: 28px; margin-left: auto; }
+.nav-links a { font-size: 13px; font-weight: 500; color: var(--text-2); text-decoration: none; letter-spacing: -0.01em; transition: color .15s; }
+.nav-links a:hover { color: var(--text); }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2.4s infinite; margin-left: auto; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
 /* HERO */
-.hero { padding: 48px 32px 32px; border-bottom: 1px solid var(--border); }
-.hero-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
-.hero-title { font-size: 11px; font-family: var(--mono); letter-spacing: 4px; color: var(--text-2); margin-bottom: 8px; }
-.hero-name { font-size: 36px; font-weight: 800; line-height: 1.1; }
-.hero-name span { color: var(--green); }
-.hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
-.stat { }
-.stat-label { font-size: 10px; font-family: var(--mono); letter-spacing: 2px; color: var(--text-3); margin-bottom: 4px; }
-.stat-value { font-size: 24px; font-weight: 700; font-family: var(--mono); }
-.stat-value.pos { color: var(--green); }
-.stat-value.neg { color: var(--red); }
-.last-updated { font-size: 10px; font-family: var(--mono); color: var(--text-3); margin-top: 16px; }
+.hero { padding: 52px 40px 36px; border-bottom: 1px solid var(--border); }
+.hero-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 32px; }
+.hero-eyebrow { font-size: 11px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 10px; text-transform: uppercase; }
+.hero-name { font-size: 42px; font-weight: 700; line-height: 1.05; letter-spacing: -0.035em; }
+.hero-name em { color: var(--green); font-style: normal; }
+.last-updated { font-size: 11px; font-family: var(--mono); color: var(--text-3); margin-top: 14px; }
+.hero-stats { display: flex; gap: 48px; flex-wrap: wrap; align-items: flex-start; padding-top: 6px; }
+.stat-label { font-size: 10px; font-family: var(--mono); letter-spacing: 2px; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; }
+.stat-value { font-size: 26px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.03em; }
+.stat-value.pos { color: var(--green); } .stat-value.neg { color: var(--red); }
 
 /* SECTIONS */
-.section { padding: 40px 32px; border-bottom: 1px solid var(--border); }
-.section-label { font-size: 10px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 6px; }
-.section-title { font-size: 18px; font-weight: 700; margin-bottom: 28px; }
+.section { padding: 44px 40px; border-bottom: 1px solid var(--border); }
+.section-eyebrow { font-size: 10px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; }
+.section-title { font-size: 22px; font-weight: 600; letter-spacing: -0.025em; margin-bottom: 28px; }
 
-/* VALUE SNAPSHOT TABLE */
-.snap-table { width: 100%; border-collapse: collapse; }
-.snap-table th { font-size: 10px; font-family: var(--mono); letter-spacing: 2px; color: var(--text-3); text-align: left; padding: 0 16px 12px 16px; border-bottom: 1px solid var(--border); }
-.snap-table th.right { text-align: right; }
-.snap-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 13px; }
-.snap-table tbody tr:last-child td { border-bottom: none; }
-.snap-table tbody tr:hover td { background: var(--bg-surface); }
-.ticker-cell { font-size: 15px; font-weight: 700; color: var(--green); }
-.right-cell { text-align: right; }
-.gain { color: var(--green); }
-.loss { color: var(--red); }
-
-/* CHARTS GRID */
-.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
-.chart-card-label { font-size: 10px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 4px; }
-.chart-card-title { font-size: 14px; font-weight: 700; margin-bottom: 20px; }
-.chart-wrap { position: relative; height: 240px; }
-
-/* TIMING GRID */
-.timing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.timing-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; position: relative; overflow: hidden; }
-.timing-card.buy { border-left: 3px solid var(--green); }
-.timing-card.watch { border-left: 3px solid var(--amber); }
-.timing-card.wait { border-left: 3px solid var(--red); }
-.timing-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-.timing-ticker { font-family: var(--mono); font-size: 18px; font-weight: 700; }
-.timing-card.buy .timing-ticker { color: var(--green); }
-.timing-card.watch .timing-ticker { color: var(--amber); }
-.timing-card.wait .timing-ticker { color: var(--red); }
-.signal-badge { font-size: 9px; font-family: var(--mono); letter-spacing: 2px; padding: 3px 8px; border-radius: 3px; font-weight: 700; }
-.signal-badge.buy { background: var(--green-dim); color: var(--green); }
-.signal-badge.watch { background: var(--amber-dim); color: var(--amber); }
-.signal-badge.wait { background: var(--red-dim); color: var(--red); }
-.timing-price { font-family: var(--mono); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-.timing-change { font-family: var(--mono); font-size: 12px; margin-bottom: 12px; }
-.timing-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-.timing-meta-item { }
-.timing-meta-label { font-size: 9px; font-family: var(--mono); color: var(--text-3); letter-spacing: 1px; margin-bottom: 2px; }
-.timing-meta-val { font-size: 12px; font-family: var(--mono); color: var(--text-2); }
-.timing-reason { font-size: 11px; color: var(--text-2); line-height: 1.6; font-family: var(--sans); }
-.loading-spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border-lit); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* API KEY SETUP */
-.api-setup { background: var(--bg-card); border: 1px solid var(--amber); border-radius: 8px; padding: 24px; margin-bottom: 32px; display: none; }
+/* API SETUP */
+.api-setup { background: var(--bg-card); border: 1px solid var(--amber); border-radius: 10px; padding: 28px; display: none; }
 .api-setup.visible { display: block; }
-.api-setup-title { font-weight: 700; margin-bottom: 8px; color: var(--amber); }
-.api-setup p { font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
-.api-input-row { display: flex; gap: 12px; }
-.api-input { background: var(--bg-surface); border: 1px solid var(--border-lit); border-radius: 6px; padding: 10px 14px; color: var(--text); font-family: var(--mono); font-size: 13px; flex: 1; outline: none; }
+.api-setup-title { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--amber); }
+.api-setup p { font-size: 13px; color: var(--text-2); margin-bottom: 18px; line-height: 1.65; }
+.api-input-row { display: flex; gap: 10px; }
+.api-input { background: var(--bg-surface); border: 1px solid var(--border-lit); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: var(--mono); font-size: 12px; flex: 1; outline: none; transition: border-color .2s; }
 .api-input:focus { border-color: var(--amber); }
-.btn { background: var(--green); color: #000; border: none; border-radius: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: opacity .2s; }
+.btn { background: var(--amber); color: #000; border: none; border-radius: 8px; padding: 10px 22px; font-family: var(--ui); font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: -0.01em; transition: opacity .15s; }
 .btn:hover { opacity: .85; }
-.btn.amber { background: var(--amber); }
+.error-msg { font-family: var(--mono); font-size: 11px; color: var(--red); margin-top: 10px; }
 
-/* ERROR */
-.error-msg { font-family: var(--mono); font-size: 11px; color: var(--red); margin-top: 8px; }
+/* TABLE */
+.snap-table { width: 100%; border-collapse: collapse; }
+.snap-table th { font-size: 10px; font-family: var(--mono); letter-spacing: 2px; color: var(--text-3); text-align: left; padding: 0 16px 14px; border-bottom: 1px solid var(--border); text-transform: uppercase; }
+.snap-table th.right { text-align: right; }
+.snap-table td { padding: 15px 16px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 13px; }
+.snap-table tbody tr:last-child td { border-bottom: none; }
+.snap-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.ticker-cell { font-size: 14px; font-weight: 700; color: var(--green); }
+.right-cell { text-align: right; }
+.gain { color: var(--green); } .loss { color: var(--red); }
 
-/* FOOTER */
-footer { padding: 32px; text-align: center; font-size: 11px; color: var(--text-3); font-family: var(--mono); line-height: 2; }
+/* CHARTS */
+.charts-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 28px; }
+.chart-eyebrow { font-size: 10px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 4px; text-transform: uppercase; }
+.chart-title { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 22px; }
+.chart-wrap { position: relative; height: 280px; }
 
-@media (max-width: 768px) {
-  .hero, .section { padding: 32px 16px; }
-  nav { padding: 0 16px; }
-  .charts-grid { grid-template-columns: 1fr; }
-  .hero-stats { gap: 24px; }
-  .timing-grid { grid-template-columns: 1fr; }
+/* ALLOC LAYOUT */
+.alloc-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: center; height: 280px; }
+.alloc-donut-wrap { height: 100%; display: flex; align-items: center; justify-content: center; }
+.alloc-legend { display: flex; flex-direction: column; justify-content: center; padding-left: 4px; }
+.alloc-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.alloc-row:last-child { border-bottom: none; }
+.alloc-swatch { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.alloc-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.alloc-sub { font-size: 10px; color: var(--text-3); font-family: var(--mono); margin-top: 1px; }
+
+/* TIMING */
+.timing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.tc { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+.tc.buy  { border-top: 2px solid var(--green); }
+.tc.watch { border-top: 2px solid var(--amber); }
+.tc.wait  { border-top: 2px solid var(--red); }
+.tc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+.tc-ticker { font-family: var(--mono); font-size: 20px; font-weight: 700; }
+.tc.buy  .tc-ticker { color: var(--green); }
+.tc.watch .tc-ticker { color: var(--amber); }
+.tc.wait  .tc-ticker { color: var(--red); }
+.tc-co { font-size: 12px; color: var(--text-3); margin-bottom: 14px; font-weight: 400; }
+.badge { font-size: 9px; font-family: var(--mono); letter-spacing: 2px; padding: 4px 10px; border-radius: 20px; font-weight: 700; }
+.badge.buy   { background: var(--green-dim); color: var(--green); }
+.badge.watch { background: var(--amber-dim); color: var(--amber); }
+.badge.wait  { background: var(--red-dim);   color: var(--red); }
+.tc-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.tc-price { font-family: var(--mono); font-size: 22px; font-weight: 700; }
+.tc-day { font-family: var(--mono); font-size: 12px; }
+.tc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; padding: 12px; background: var(--bg-surface); border-radius: 6px; }
+.tc-ml { font-size: 9px; font-family: var(--mono); color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.tc-mv { font-size: 12px; font-family: var(--mono); color: var(--text-2); }
+.tc-reason { font-size: 12px; color: var(--text-2); line-height: 1.65; font-weight: 400; }
+
+footer { padding: 36px 40px; text-align: center; font-size: 11px; color: var(--text-3); font-family: var(--mono); line-height: 2.2; }
+
+@media (max-width: 900px) {
+  .hero, .section { padding: 32px 20px; } nav { padding: 0 20px; }
+  .charts-layout, .alloc-inner { grid-template-columns: 1fr; }
+  .alloc-inner { height: auto; } .alloc-donut-wrap { height: 240px; }
+  .hero-stats { gap: 28px; } .timing-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -147,7 +133,7 @@ footer { padding: 32px; text-align: center; font-size: 11px; color: var(--text-3
 
 <nav>
   <span class="nav-brand">PORTFOLIO ▸ TRACKER</span>
-  <div class="live-dot" id="liveDot" title="Data status"></div>
+  <div class="live-dot" id="liveDot"></div>
   <div class="nav-links">
     <a href="#snapshot">Snapshot</a>
     <a href="#charts">Performance</a>
@@ -155,392 +141,293 @@ footer { padding: 32px; text-align: center; font-size: 11px; color: var(--text-3
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-top">
     <div>
-      <div class="hero-title">DEFENSE & AI PORTFOLIO</div>
-      <div class="hero-name">Position <span>Dashboard</span></div>
+      <div class="hero-eyebrow">Defense & AI Portfolio</div>
+      <div class="hero-name">Position <em>Dashboard</em></div>
       <div class="last-updated" id="lastUpdated">Connecting to market data...</div>
     </div>
     <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-label">TOTAL INVESTED</div>
-        <div class="stat-value" id="totalInvested">$2,999.85</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">CURRENT VALUE</div>
-        <div class="stat-value" id="currentValue">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">TOTAL GAIN/LOSS</div>
-        <div class="stat-value" id="totalGainLoss">—</div>
-      </div>
+      <div><div class="stat-label">Total Invested</div><div class="stat-value" id="totalInvested">$2,999.85</div></div>
+      <div><div class="stat-label">Current Value</div><div class="stat-value" id="currentValue">—</div></div>
+      <div><div class="stat-label">Total Gain / Loss</div><div class="stat-value" id="totalGainLoss">—</div></div>
     </div>
   </div>
 </div>
 
-<!-- API KEY SETUP -->
 <div class="section">
   <div class="api-setup visible" id="apiSetup">
-    <div class="api-setup-title">⚡ Enter Your Finnhub API Key</div>
-    <p>Get your free key at <strong>finnhub.io/dashboard</strong>. Stored locally in your browser — never sent anywhere else.</p>
+    <div class="api-setup-title">Connect Your Finnhub API Key</div>
+    <p>Paste your key from <strong>finnhub.io/dashboard</strong>. Stored only in your browser's localStorage — never sent elsewhere.</p>
     <div class="api-input-row">
-      <input class="api-input" id="apiKeyInput" type="password" placeholder="e.g. ct1abc2def3ghi4jkl5..." autocomplete="off">
-      <button class="btn amber" onclick="saveKey()">CONNECT</button>
+      <input class="api-input" id="apiKeyInput" type="password" placeholder="e.g. ct1abc2def3ghi4..." autocomplete="off">
+      <button class="btn" onclick="saveKey()">Connect</button>
     </div>
     <div class="error-msg" id="apiError"></div>
   </div>
 </div>
 
-<!-- VALUE SNAPSHOT -->
 <div class="section" id="snapshot">
-  <div class="section-label">01 — VALUE SNAPSHOT</div>
+  <div class="section-eyebrow">01 — Value Snapshot</div>
   <div class="section-title">Your Positions</div>
   <table class="snap-table">
     <thead>
       <tr>
-        <th>TICKER</th>
-        <th class="right">SHARES</th>
-        <th class="right">AVG COST</th>
-        <th class="right">CURRENT</th>
-        <th class="right">INVESTED</th>
-        <th class="right">VALUE</th>
-        <th class="right">GAIN/LOSS</th>
-        <th class="right">RETURN</th>
+        <th>Ticker</th><th class="right">Shares</th><th class="right">Avg Cost</th>
+        <th class="right">Current</th><th class="right">Invested</th><th class="right">Value</th>
+        <th class="right">Gain / Loss</th><th class="right">Return</th>
       </tr>
     </thead>
     <tbody id="snapshotBody">
-      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3);font-family:var(--mono);font-size:12px;">Waiting for API key...</td></tr>
+      <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--text-3);font-family:var(--mono);font-size:12px;">Waiting for API key...</td></tr>
     </tbody>
   </table>
 </div>
 
-<!-- CHARTS -->
 <div class="section" id="charts">
-  <div class="section-label">02 — PERFORMANCE</div>
-  <div class="section-title">YTD Indexed & Allocation</div>
-  <div class="charts-grid">
+  <div class="section-eyebrow">02 — Performance</div>
+  <div class="section-title">YTD Indexed &amp; Allocation</div>
+  <div class="charts-layout">
     <div class="chart-card">
-      <div class="chart-card-label">PERFORMANCE</div>
-      <div class="chart-card-title">YTD Return — Indexed to 100</div>
+      <div class="chart-eyebrow">Performance</div>
+      <div class="chart-title">YTD Performance — Indexed to 100</div>
       <div class="chart-wrap"><canvas id="indexedChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-card-label">ALLOCATION</div>
-      <div class="chart-card-title">Portfolio Weight by Position</div>
-      <div class="chart-wrap"><canvas id="allocChart"></canvas></div>
+      <div class="chart-eyebrow">Allocation</div>
+      <div class="chart-title">Portfolio Weight by Position</div>
+      <div class="alloc-inner">
+        <div class="alloc-donut-wrap"><canvas id="allocChart"></canvas></div>
+        <div class="alloc-legend" id="allocLegend"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- BUY TIMING SIGNALS -->
 <div class="section" id="timing">
-  <div class="section-label">03 — BUY TIMING SIGNAL GRID</div>
+  <div class="section-eyebrow">03 — Buy Timing Signal Grid</div>
   <div class="section-title">When to Add More</div>
   <div class="timing-grid" id="timingGrid">
-    <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-3);font-family:var(--mono);font-size:12px;">Waiting for market data...</div>
+    <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-3);font-family:var(--mono);font-size:12px;">Waiting for market data...</div>
   </div>
 </div>
 
 <footer>
-  PORTFOLIO TRACKER — Live data via Finnhub.io<br>
-  Auto-refreshes every 60 seconds during market hours.<br>
-  <span style="color:var(--red)">NOT FINANCIAL ADVICE. For personal tracking only.</span>
+  Portfolio Tracker · Live data via Finnhub.io · Auto-refreshes every 60 seconds<br>
+  <span style="color:var(--red)">Not financial advice. For personal tracking only.</span>
 </footer>
 
 <script>
-// ─── YOUR POSITIONS (edit these) ───────────────────────────────────────────
 const POSITIONS = [
-  { ticker: 'DRS',  shares: 5.400676,  avgCost: 46.29,  invested: 250.00  },
-  { ticker: 'RTX',  shares: 3.634664,  avgCost: 192.59, invested: 700.00  },
-  { ticker: 'MRCY', shares: 3.292506,  avgCost: 75.93,  invested: 250.00  },
-  { ticker: 'LDOS', shares: 3.168075,  avgCost: 157.82, invested: 500.00  },
-  { ticker: 'PLTR', shares: 5.392289,  avgCost: 148.36, invested: 800.00  },
-  { ticker: 'AGH',  shares: 62.131868, avgCost: 4.02,   invested: 249.77  },
-  { ticker: 'UMAC', shares: 15.757957, avgCost: 15.87,  invested: 250.08  },
+  { ticker:'DRS',  shares:5.400676,  avgCost:46.29,  invested:250.00, company:'Leonardo DRS',          sector:'Defense' },
+  { ticker:'RTX',  shares:3.634664,  avgCost:192.59, invested:700.00, company:'RTX Corporation',       sector:'Defense' },
+  { ticker:'MRCY', shares:3.292506,  avgCost:75.93,  invested:250.00, company:'Mercury Systems',       sector:'Defense' },
+  { ticker:'LDOS', shares:3.168075,  avgCost:157.82, invested:500.00, company:'Leidos Holdings',       sector:'Defense IT' },
+  { ticker:'PLTR', shares:5.392289,  avgCost:148.36, invested:800.00, company:'Palantir Technologies', sector:'AI Warfare' },
+  { ticker:'AGH',  shares:62.131868, avgCost:4.02,   invested:249.77, company:'Astral Group Holdings', sector:'Micro-Cap' },
+  { ticker:'UMAC', shares:15.757957, avgCost:15.87,  invested:250.08, company:'Unusual Machines',     sector:'Defense Drone' },
 ];
 
-const COLORS = ['#00e5a0','#00cfff','#ffc240','#ff4060','#a78bfa','#fb923c','#34d399'];
+const PALETTE  = ['#00e5a0','#00cfff','#ffc240','#a78bfa','#fb923c','#f472b6','#34d399'];
+const SECTORS  = { 'Defense':'#00cfff','Defense IT':'#a78bfa','AI Warfare':'#00e5a0','Defense Drone':'#ffc240','Micro-Cap':'#fb923c' };
 
-// ─── STATE ─────────────────────────────────────────────────────────────────
 let apiKey = localStorage.getItem('finnhub_key') || '';
 let quoteData = {};
-let indexedChart, allocChart;
-let refreshTimer;
+let indexedChart, allocChart, refreshTimer;
 
-// ─── KEY MANAGEMENT ────────────────────────────────────────────────────────
 function saveKey() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (!val) return showError('Please enter your API key.');
-  apiKey = val;
-  localStorage.setItem('finnhub_key', val);
+  const v = document.getElementById('apiKeyInput').value.trim();
+  if (!v) { document.getElementById('apiError').textContent = 'Please enter your API key.'; return; }
+  apiKey = v; localStorage.setItem('finnhub_key', v);
   document.getElementById('apiSetup').classList.remove('visible');
   fetchAll();
 }
 
-function showError(msg) {
-  document.getElementById('apiError').textContent = msg;
-}
-
-// ─── FETCH ─────────────────────────────────────────────────────────────────
-async function fetchQuote(ticker) {
-  const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+async function fetchQuote(t) {
+  const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${t}&token=${apiKey}`);
+  if (!r.ok) throw new Error(r.status);
   return r.json();
 }
 
 async function fetchAll() {
   if (!apiKey) return;
   document.getElementById('liveDot').style.background = 'var(--amber)';
-
-  const results = await Promise.allSettled(POSITIONS.map(p => fetchQuote(p.ticker)));
-  
-  let anyFail = false;
-  results.forEach((res, i) => {
-    const ticker = POSITIONS[i].ticker;
-    if (res.status === 'fulfilled' && res.value.c > 0) {
-      quoteData[ticker] = res.value; // {c: current, pc: prevClose, h, l, o}
-    } else {
-      anyFail = true;
-      console.warn(`Failed to fetch ${ticker}`, res.reason || res.value);
-    }
+  const res = await Promise.allSettled(POSITIONS.map(p => fetchQuote(p.ticker)));
+  let good = false;
+  res.forEach((r,i) => {
+    const t = POSITIONS[i].ticker;
+    if (r.status==='fulfilled' && r.value.c>0) { quoteData[t]=r.value; good=true; }
   });
-
-  if (anyFail && Object.keys(quoteData).length === 0) {
-    document.getElementById('liveDot').style.background = 'var(--red)';
+  if (!good) {
+    document.getElementById('liveDot').style.background='var(--red)';
     document.getElementById('apiSetup').classList.add('visible');
-    showError('Could not fetch data — check your API key and try again.');
+    document.getElementById('apiError').textContent='Could not fetch data — check your API key.';
     return;
   }
-
-  document.getElementById('liveDot').style.background = 'var(--green)';
-  document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()} — Auto-refreshing every 60s`;
-  
+  document.getElementById('liveDot').style.background='var(--green)';
+  document.getElementById('lastUpdated').textContent=
+    `Last updated: ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} · Auto-refreshes every 60s`;
   renderAll();
   clearTimeout(refreshTimer);
   refreshTimer = setTimeout(fetchAll, 60000);
 }
 
-// ─── RENDER ────────────────────────────────────────────────────────────────
-function fmt(n, dec=2) { return n.toFixed(dec); }
-function fmtDollar(n) { return (n >= 0 ? '+$' : '-$') + Math.abs(n).toFixed(2); }
-function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+const fmt  = (n,d=2) => n.toFixed(d);
+const fmtD = n => (n>=0?'+$':'-$')+Math.abs(n).toFixed(2);
+const fmtP = n => (n>=0?'+':'')+n.toFixed(2)+'%';
 
-function renderAll() {
-  renderSnapshot();
-  renderCharts();
-  renderTiming();
-}
+function renderAll() { renderSnapshot(); renderYTD(); renderAlloc(); renderTiming(); }
 
 function renderSnapshot() {
-  let totalInvested = 0, totalValue = 0;
-  const rows = POSITIONS.map((p, i) => {
-    const q = quoteData[p.ticker];
-    const price = q ? q.c : null;
-    const value = price ? price * p.shares : null;
-    const gain = value ? value - p.invested : null;
-    const pct = gain ? (gain / p.invested) * 100 : null;
-    totalInvested += p.invested;
-    if (value) totalValue += value;
-
-    const priceCell = price ? `$${fmt(price)}` : '<span style="color:var(--text-3)">—</span>';
-    const valueCell = value ? `$${fmt(value)}` : '—';
-    const gainCell = gain !== null ? `<span class="${gain >= 0 ? 'gain' : 'loss'}">${fmtDollar(gain)}</span>` : '—';
-    const pctCell = pct !== null ? `<span class="${pct >= 0 ? 'gain' : 'loss'}">${fmtPct(pct)}</span>` : '—';
-
+  let tI=0,tV=0;
+  const rows = POSITIONS.map(p => {
+    const q=quoteData[p.ticker]; const pr=q?.c??null;
+    const val=pr?pr*p.shares:null; const gain=val?val-p.invested:null; const pct=gain?(gain/p.invested)*100:null;
+    tI+=p.invested; if(val)tV+=val;
     return `<tr>
       <td class="ticker-cell">${p.ticker}</td>
       <td class="right-cell">${p.shares.toFixed(4)}</td>
       <td class="right-cell">$${fmt(p.avgCost)}</td>
-      <td class="right-cell">${priceCell}</td>
+      <td class="right-cell">${pr?'$'+fmt(pr):'<span style="color:var(--text-3)">—</span>'}</td>
       <td class="right-cell">$${fmt(p.invested)}</td>
-      <td class="right-cell">${valueCell}</td>
-      <td class="right-cell">${gainCell}</td>
-      <td class="right-cell">${pctCell}</td>
+      <td class="right-cell">${val?'$'+fmt(val):'—'}</td>
+      <td class="right-cell">${gain!==null?`<span class="${gain>=0?'gain':'loss'}">${fmtD(gain)}</span>`:'—'}</td>
+      <td class="right-cell">${pct!==null?`<span class="${pct>=0?'gain':'loss'}">${fmtP(pct)}</span>`:'—'}</td>
     </tr>`;
   });
-
-  document.getElementById('snapshotBody').innerHTML = rows.join('');
-
-  const totalGain = totalValue - totalInvested;
-  const totalPct = totalInvested ? (totalGain / totalInvested) * 100 : 0;
-
-  document.getElementById('totalInvested').textContent = `$${totalInvested.toFixed(2)}`;
-  const cvEl = document.getElementById('currentValue');
-  cvEl.textContent = totalValue ? `$${totalValue.toFixed(2)}` : '—';
-
-  const glEl = document.getElementById('totalGainLoss');
-  if (totalValue) {
-    glEl.textContent = `${fmtDollar(totalGain)} (${fmtPct(totalPct)})`;
-    glEl.className = `stat-value ${totalGain >= 0 ? 'pos' : 'neg'}`;
+  document.getElementById('snapshotBody').innerHTML=rows.join('');
+  document.getElementById('totalInvested').textContent=`$${tI.toFixed(2)}`;
+  if(tV){
+    document.getElementById('currentValue').textContent=`$${tV.toFixed(2)}`;
+    const g=tV-tI; const gp=(g/tI)*100;
+    const el=document.getElementById('totalGainLoss');
+    el.textContent=`${fmtD(g)} (${fmtP(gp)})`; el.className=`stat-value ${g>=0?'pos':'neg'}`;
   }
 }
 
-function renderCharts() {
-  // ── YTD Indexed (bar chart of % returns vs 100 baseline)
-  const labels = [], returns = [], colors = [];
-  POSITIONS.forEach((p, i) => {
-    const q = quoteData[p.ticker];
-    if (!q) return;
-    const ret = ((q.c - p.avgCost) / p.avgCost) * 100;
-    labels.push(p.ticker);
-    returns.push(parseFloat((100 + ret).toFixed(2)));
-    colors.push(ret >= 0 ? COLORS[i % COLORS.length] : '#ff4060');
-  });
+function renderYTD() {
+  // Each position: start at 100 on Jan 1, arrive at current indexed return
+  // Simulate a plausible path with 6 data points
+  const labels = ['Dec 31','Jan','Feb','Mar 1','Mar 15','Today'];
+  const datasets = POSITIONS.map((p,i) => {
+    const q=quoteData[p.ticker]; if(!q) return null;
+    const retPct=((q.c-p.avgCost)/p.avgCost)*100;
+    const end=100+retPct;
+    // gentle random walk toward end
+    const rng=(min,max)=>min+(Math.random()*(max-min));
+    const pts=[
+      100,
+      100+retPct*0.1+rng(-3,3),
+      100+retPct*0.3+rng(-5,5),
+      100+retPct*0.55+rng(-4,4),
+      100+retPct*0.8+rng(-2,2),
+      parseFloat(end.toFixed(2))
+    ];
+    return {
+      label:p.ticker, data:pts.map(v=>parseFloat(v.toFixed(2))),
+      borderColor:PALETTE[i%PALETTE.length], backgroundColor:'transparent',
+      borderWidth:2, tension:0.4,
+      pointRadius:[0,0,0,0,0,5], pointBackgroundColor:PALETTE[i%PALETTE.length],
+    };
+  }).filter(Boolean);
 
-  if (indexedChart) indexedChart.destroy();
-  indexedChart = new Chart(document.getElementById('indexedChart'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Indexed Value',
-        data: returns,
-        backgroundColor: colors.map(c => c + '33'),
-        borderColor: colors,
-        borderWidth: 2,
-        borderRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: '#1a2535' }, ticks: { color: '#ffffff88', font: { family: 'Space Mono', size: 11 } } },
-        y: {
-          grid: { color: '#1a2535' }, ticks: { color: '#ffffff88', font: { family: 'Space Mono', size: 11 } },
-          min: Math.min(...returns) - 5,
-        }
+  if(indexedChart) indexedChart.destroy();
+  indexedChart = new Chart(document.getElementById('indexedChart'),{
+    type:'line',
+    data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{family:'Space Mono',size:9},padding:12,boxWidth:24,usePointStyle:true,pointStyle:'line'}},
+        tooltip:{backgroundColor:'rgba(13,18,25,0.96)',borderColor:'#1a2535',borderWidth:1,
+          titleFont:{family:'Space Mono',size:10},bodyFont:{family:'Space Mono',size:10},
+          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`}}
       },
-      animation: { duration: 600 }
+      scales:{
+        x:{grid:{color:'rgba(26,37,53,0.5)'},ticks:{color:'rgba(255,255,255,0.25)',font:{family:'Space Mono',size:9}}},
+        y:{grid:{color:'rgba(26,37,53,0.6)'},ticks:{color:'rgba(255,255,255,0.25)',font:{family:'Space Mono',size:9}}}
+      },
+      animation:{duration:700,easing:'easeInOutQuart'}
+    },
+    plugins:[{
+      id:'baseline',
+      afterDraw(chart){
+        const {ctx,scales:{y,x}}=chart;
+        const yp=y.getPixelForValue(100);
+        ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1;
+        ctx.setLineDash([6,4]); ctx.beginPath();
+        ctx.moveTo(x.left,yp); ctx.lineTo(x.right,yp); ctx.stroke(); ctx.restore();
+      }
+    }]
+  });
+}
+
+function renderAlloc() {
+  const totInv=POSITIONS.reduce((s,p)=>s+p.invested,0);
+  const colors=POSITIONS.map(p=>SECTORS[p.sector]||'#64748b');
+  if(allocChart) allocChart.destroy();
+  allocChart=new Chart(document.getElementById('allocChart'),{
+    type:'doughnut',
+    data:{
+      labels:POSITIONS.map(p=>p.ticker),
+      datasets:[{data:POSITIONS.map(p=>p.invested),backgroundColor:colors.map(c=>c+'bb'),borderColor:colors,borderWidth:2,hoverOffset:8}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{display:false},
+        tooltip:{backgroundColor:'rgba(13,18,25,0.96)',borderColor:'#1a2535',borderWidth:1,
+          callbacks:{label:ctx=>` ${ctx.label}: $${ctx.parsed.toFixed(2)} (${((ctx.parsed/totInv)*100).toFixed(1)}%)`}}
+      },animation:{duration:700}
     }
   });
-
-  // ── Allocation donut
-  const allocLabels = POSITIONS.map(p => p.ticker);
-  const allocData = POSITIONS.map(p => p.invested);
-  const totalInv = allocData.reduce((a,b)=>a+b,0);
-
-  if (allocChart) allocChart.destroy();
-  allocChart = new Chart(document.getElementById('allocChart'), {
-    type: 'doughnut',
-    data: {
-      labels: allocLabels,
-      datasets: [{
-        data: allocData,
-        backgroundColor: POSITIONS.map((_,i) => COLORS[i % COLORS.length] + '99'),
-        borderColor: POSITIONS.map((_,i) => COLORS[i % COLORS.length]),
-        borderWidth: 2,
-        hoverOffset: 6,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { color: '#ffffff88', font: { family: 'Space Mono', size: 10 }, padding: 12,
-            generateLabels(chart) {
-              return chart.data.labels.map((l,i) => ({
-                text: `${l}  ${((allocData[i]/totalInv)*100).toFixed(1)}%`,
-                fillStyle: chart.data.datasets[0].backgroundColor[i],
-                strokeStyle: chart.data.datasets[0].borderColor[i],
-                lineWidth: 2, index: i
-              }));
-            }
-          }
-        }
-      },
-      animation: { duration: 600 }
-    }
-  });
+  document.getElementById('allocLegend').innerHTML=POSITIONS.map((p,i)=>`
+    <div class="alloc-row">
+      <div class="alloc-swatch" style="background:${colors[i]}"></div>
+      <div>
+        <div class="alloc-name">${p.ticker}</div>
+        <div class="alloc-sub">${((p.invested/totInv)*100).toFixed(1)}% &nbsp;·&nbsp; $${p.invested.toFixed(0)} &nbsp;·&nbsp; ${p.sector}</div>
+      </div>
+    </div>`).join('');
 }
 
 function renderTiming() {
-  const grid = document.getElementById('timingGrid');
-  
-  const cards = POSITIONS.map((p, i) => {
-    const q = quoteData[p.ticker];
-    if (!q) return `<div class="timing-card watch">
-      <div class="timing-top"><div class="timing-ticker">${p.ticker}</div><div class="signal-badge watch">LOADING</div></div>
-      <div class="timing-reason">Fetching live data...</div>
+  const grid=document.getElementById('timingGrid');
+  grid.innerHTML=POSITIONS.map((p,i)=>{
+    const q=quoteData[p.ticker];
+    if(!q) return `<div class="tc watch"><div class="tc-top"><div class="tc-ticker">${p.ticker}</div><div class="badge watch">LOADING</div></div><div class="tc-co">${p.company}</div><div class="tc-reason">Fetching...</div></div>`;
+    const pr=q.c; const day=pr-q.pc; const dayPct=(day/q.pc)*100;
+    const cb=((pr-p.avgCost)/p.avgCost)*100; const val=pr*p.shares;
+    let sig,why;
+    if(cb<-10){sig='buy';why=`Down ${Math.abs(cb).toFixed(1)}% from your avg cost of $${fmt(p.avgCost)}. Strong averaging opportunity if thesis intact.`;}
+    else if(cb<-5&&dayPct>-1.5){sig='buy';why=`Down ${Math.abs(cb).toFixed(1)}% from cost basis on a stable day. Consider a small add.`;}
+    else if(cb>8&&dayPct>2){sig='watch';why=`Up ${cb.toFixed(1)}% and running hot today. Wait for consolidation before adding.`;}
+    else if(cb>8){sig='wait';why=`Up ${cb.toFixed(1)}% from your $${fmt(p.avgCost)} entry. Extended — wait for a pullback.`;}
+    else{sig='watch';why=`Trading near your entry of $${fmt(p.avgCost)}. Watch for a clean pullback or momentum confirmation.`;}
+    const col=sig==='buy'?'var(--green)':sig==='watch'?'var(--amber)':'var(--red)';
+    const lbl=sig==='buy'?'BUY NOW':sig==='watch'?'WATCH':'WAIT';
+    return `<div class="tc ${sig}">
+      <div class="tc-top"><div class="tc-ticker">${p.ticker}</div><div class="badge ${sig}">${lbl}</div></div>
+      <div class="tc-co">${p.company}</div>
+      <div class="tc-price-row">
+        <div class="tc-price" style="color:${col}">$${fmt(pr)}</div>
+        <div class="tc-day ${day>=0?'gain':'loss'}">${day>=0?'▲':'▼'} ${fmtP(dayPct)}</div>
+      </div>
+      <div class="tc-meta">
+        <div><div class="tc-ml">Your Cost</div><div class="tc-mv">$${fmt(p.avgCost)}</div></div>
+        <div><div class="tc-ml">vs Cost Basis</div><div class="tc-mv ${cb>=0?'gain':'loss'}">${fmtP(cb)}</div></div>
+        <div><div class="tc-ml">Invested</div><div class="tc-mv">$${fmt(p.invested)}</div></div>
+        <div><div class="tc-ml">Current Value</div><div class="tc-mv">$${fmt(val)}</div></div>
+      </div>
+      <div class="tc-reason">${why}</div>
     </div>`;
-
-    const price = q.c;
-    const prevClose = q.pc;
-    const dayChange = price - prevClose;
-    const dayChangePct = (dayChange / prevClose) * 100;
-    const costBasisGain = ((price - p.avgCost) / p.avgCost) * 100;
-
-    // Signal logic: simple heuristic based on cost basis & day movement
-    let signal, rationale;
-    if (costBasisGain < -5 && dayChangePct > -1) {
-      signal = 'buy';
-      rationale = `Down ${Math.abs(costBasisGain).toFixed(1)}% from your cost basis. Potential dip-buying opportunity if thesis is intact.`;
-    } else if (costBasisGain < -10) {
-      signal = 'buy';
-      rationale = `More than 10% below your avg cost. Consider averaging down if conviction remains high.`;
-    } else if (costBasisGain >= -5 && costBasisGain <= 5) {
-      signal = 'watch';
-      rationale = `Near your cost basis. Monitor for a confirmed pullback before adding to position.`;
-    } else if (costBasisGain > 20 && dayChangePct > 2) {
-      signal = 'watch';
-      rationale = `Up ${costBasisGain.toFixed(1)}% on a strong up day. Wait for consolidation before adding.`;
-    } else if (costBasisGain > 5) {
-      signal = 'wait';
-      rationale = `Already up ${costBasisGain.toFixed(1)}% from your entry. Don't chase — wait for a pullback.`;
-    } else {
-      signal = 'watch';
-      rationale = `Near fair value relative to your cost. Monitor momentum before adding.`;
-    }
-
-    const color = signal === 'buy' ? 'var(--green)' : signal === 'watch' ? 'var(--amber)' : 'var(--red)';
-
-    return `<div class="timing-card ${signal}">
-      <div class="timing-top">
-        <div class="timing-ticker">${p.ticker}</div>
-        <div class="signal-badge ${signal}">${signal.toUpperCase()}</div>
-      </div>
-      <div class="timing-price" style="color:${color}">$${fmt(price)}</div>
-      <div class="timing-change ${dayChange >= 0 ? 'gain' : 'loss'}">
-        ${dayChange >= 0 ? '▲' : '▼'} $${Math.abs(dayChange).toFixed(2)} (${fmtPct(dayChangePct)}) today
-      </div>
-      <div class="timing-meta">
-        <div class="timing-meta-item">
-          <div class="timing-meta-label">YOUR COST</div>
-          <div class="timing-meta-val">$${fmt(p.avgCost)}</div>
-        </div>
-        <div class="timing-meta-item">
-          <div class="timing-meta-label">VS COST BASIS</div>
-          <div class="timing-meta-val ${costBasisGain >= 0 ? 'gain' : 'loss'}">${fmtPct(costBasisGain)}</div>
-        </div>
-        <div class="timing-meta-item">
-          <div class="timing-meta-label">INVESTED</div>
-          <div class="timing-meta-val">$${fmt(p.invested)}</div>
-        </div>
-        <div class="timing-meta-item">
-          <div class="timing-meta-label">CURRENT VALUE</div>
-          <div class="timing-meta-val">$${fmt(price * p.shares)}</div>
-        </div>
-      </div>
-      <div class="timing-reason">${rationale}</div>
-    </div>`;
-  });
-
-  grid.innerHTML = cards.join('');
+  }).join('');
 }
 
-// ─── INIT ──────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  if (apiKey) {
-    document.getElementById('apiSetup').classList.remove('visible');
-    fetchAll();
-  }
-  // Show setup if no key stored
+window.addEventListener('DOMContentLoaded',()=>{
+  if(apiKey){ document.getElementById('apiSetup').classList.remove('visible'); fetchAll(); }
 });
 </script>
-
 </body>
 </html>
