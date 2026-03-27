@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Portfolio Tracker</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121935;
+      --panel-2: #182247;
+      --text: #eef2ff;
+      --muted: #9aa7d1;
+      --border: rgba(255,255,255,.08);
+      --good: #33d17a;
+      --bad: #ff6b6b;
+      --accent: #6ea8fe;
+      --accent-2: #9f7aea;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(110,168,254,.20), transparent 24%),
+        radial-gradient(circle at top right, rgba(159,122,234,.14), transparent 22%),
+        linear-gradient(180deg, #0a0f1f 0%, #0c1123 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1.05;
+      letter-spacing: -.03em;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-top: 8px;
+      max-width: 800px;
+      line-height: 1.45;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-inner {
+      padding: 18px 18px 20px;
+    }
+
+    .summary-card {
+      grid-column: span 3;
+      min-height: 142px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 14px;
+    }
+
+    .summary-value {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+
+    .summary-sub {
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.35;
+    }
+
+    .panel-lg {
+      grid-column: span 8;
+    }
+
+    .panel-sm {
+      grid-column: span 4;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 1.08rem;
+      letter-spacing: .01em;
+    }
+
+    .section-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, .ghost-btn, input {
+      font: inherit;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 11px 14px;
+      background: linear-gradient(180deg, var(--accent), #4e88ee);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(78,136,238,.26);
+    }
+
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      padding: 11px 14px;
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .muted-btn {
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid var(--border);
+    }
+
+    .small {
+      font-size: .87rem;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 13px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    td {
+      font-size: .96rem;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ticker {
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    .positive { color: var(--good); }
+    .negative { color: var(--bad); }
+
+    .editor-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .editor-row {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .editor-row label {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    input.price-input {
+      width: 100%;
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      outline: none;
+    }
+
+    input.price-input:focus {
+      border-color: rgba(110,168,254,.7);
+      box-shadow: 0 0 0 3px rgba(110,168,254,.16);
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: .84rem;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .bar-item {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: .92rem;
+    }
+
+    .bar-track {
+      position: relative;
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      height: 320px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1080px) {
+      .summary-card, .panel-lg, .panel-sm {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px; }
+      .card-inner { padding: 16px; }
+      .editor-row {
+        grid-template-columns: 64px 1fr;
+      }
+      .editor-row .mini {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Personal Portfolio Tracker</h1>
+          <div class="sub">
+            A lightweight dashboard for your current positions. Open this file in your browser, update prices manually when you want, and it will recalculate your value, gain/loss, allocation, and top movers instantly.
+          </div>
+        </div>
+        <div class="badge-row">
+          <div class="badge" id="lastUpdatedBadge">Last updated: not yet</div>
+          <div class="badge" id="holdingsCountBadge">7 positions</div>
+          <div class="badge">Private local file</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card summary-card">
+        <div class="card-inner">
+          <div class="summary-label">Portfolio market value</div>
+          <div class="summary-value" id="portfolioValue">$0.00</div>
+          <div class="summary-sub" id="portfolioCost">Cost basis: $0.00</div>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-inner">
+          <div class="summary-label">Unrealized gain / loss</div>
+          <div class="summary-value" id="portfolioPnL">$0.00</div>
+          <div class="summary-sub" id="portfolioPnLPct">0.00%</div>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-inner">
+          <div class="summary-label">Best position</div>
+          <div class="summary-value" id="bestPosition">-</div>
+          <div class="summary-sub" id="bestPositionDetail">Waiting for prices</div>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-inner">
+          <div class="summary-label">Largest allocation</div>
+          <div class="summary-value" id="largestAllocation">-</div>
+          <div class="summary-sub" id="largestAllocationDetail">Waiting for prices</div>
+        </div>
+      </div>
+
+      <div class="card panel-lg">
+        <div class="card-inner">
+          <div class="section-title">
+            <div>
+              <h2>Your positions</h2>
+              <p>All calculations use your shares and average cost basis.</p>
+            </div>
+            <div class="toolbar">
+              <button id="resetToCostBtn" class="muted-btn">Reset prices to cost basis</button>
+              <button id="exportBtn" class="muted-btn">Export snapshot</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ticker</th>
+                  <th class="num">Shares</th>
+                  <th class="num">Avg cost</th>
+                  <th class="num">Current price</th>
+                  <th class="num">Market value</th>
+                  <th class="num">Cost basis</th>
+                  <th class="num">Gain / loss</th>
+                  <th class="num">Gain / loss %</th>
+                  <th class="num">Allocation</th>
+                </tr>
+              </thead>
+              <tbody id="positionsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="footer-note">
+            This version is intentionally simple and local. It does not call an external stock API yet, so you do not burn credits and you do not need hosting. Later, this same file can be upgraded to pull live quotes from an API if you want.
+          </div>
+        </div>
+      </div>
+
+      <div class="card panel-sm">
+        <div class="card-inner">
+          <div class="section-title">
+            <div>
+              <h2>Quick price update</h2>
+              <p>Paste in or type current prices whenever you want.</p>
+            </div>
+          </div>
+
+          <div id="priceEditor" class="editor-grid"></div>
+
+          <div class="toolbar" style="margin-top:14px;">
+            <button id="savePricesBtn">Save prices</button>
+            <button id="clearSavedBtn" class="muted-btn">Clear saved prices</button>
+          </div>
+
+          <div class="note">
+            The numbers you save here stay in your browser with local storage. That means the dashboard remembers your last entered prices the next time you open this file on the same computer and browser.
+          </div>
+        </div>
+      </div>
+
+      <div class="card panel-lg">
+        <div class="card-inner">
+          <div class="section-title">
+            <div>
+              <h2>Allocation by position</h2>
+              <p>Based on current market value.</p>
+            </div>
+          </div>
+          <div id="allocationBars" class="bar-list"></div>
+        </div>
+      </div>
+
+      <div class="card panel-sm">
+        <div class="card-inner">
+          <div class="section-title">
+            <div>
+              <h2>Value snapshot</h2>
+              <p>Simple visual of where each position stands right now.</p>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="valueChart" width="400" height="320"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'jewels-portfolio-tracker-prices-v1';
+
+    const holdings = [
+      { ticker: 'DRS', shares: 5.400676, avgCost: 46.29 },
+      { ticker: 'RTX', shares: 3.634664, avgCost: 192.59 },
+      { ticker: 'MRCY', shares: 3.292506, avgCost: 75.93 },
+      { ticker: 'LDOS', shares: 3.168075, avgCost: 157.82 },
+      { ticker: 'PLTR', shares: 5.392289, avgCost: 148.36 },
+      { ticker: 'AGH', shares: 62.131868, avgCost: 4.02 },
+      { ticker: 'UMAC', shares: 15.757957, avgCost: 15.87 }
+    ];
+
+    function currency(value) {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+    }
+
+    function pct(value) {
+      return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+    }
+
+    function cleanNumber(value) {
+      return Number.parseFloat(value);
+    }
+
+    function loadSavedPrices() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (error) {
+        console.error('Could not load saved prices', error);
+        return null;
+      }
+    }
+
+    function savePrices(prices) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        prices,
+        savedAt: new Date().toISOString()
+      }));
+    }
+
+    function clearSavedPrices() {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function getCurrentPriceMap() {
+      const saved = loadSavedPrices();
+      const defaultPrices = Object.fromEntries(holdings.map(h => [h.ticker, h.avgCost]));
+      if (!saved || !saved.prices) return defaultPrices;
+      return { ...defaultPrices, ...saved.prices };
+    }
+
+    function getSavedAt() {
+      const saved = loadSavedPrices();
+      return saved?.savedAt || null;
+    }
+
+    function buildPriceEditor() {
+      const priceMap = getCurrentPriceMap();
+      const editor = document.getElementById('priceEditor');
+      editor.innerHTML = holdings.map(h => `
+        <div class="editor-row">
+          <label for="price-${h.ticker}">${h.ticker}</label>
+          <input
+            class="price-input"
+            id="price-${h.ticker}"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            min="0"
+            value="${Number(priceMap[h.ticker]).toFixed(2)}"
+          />
+          <div class="mini">Cost ${currency(h.avgCost)}</div>
+        </div>
+      `).join('');
+    }
+
+    function getEditorPrices() {
+      const prices = {};
+      for (const h of holdings) {
+        const value = cleanNumber(document.getElementById(`price-${h.ticker}`).value);
+        prices[h.ticker] = Number.isFinite(value) ? value : h.avgCost;
+      }
+      return prices;
+    }
+
+    function computeRows() {
+      const currentPrices = getCurrentPriceMap();
+      const rows = holdings.map(h => {
+        const currentPrice = currentPrices[h.ticker] ?? h.avgCost;
+        const marketValue = currentPrice * h.shares;
+        const costBasis = h.avgCost * h.shares;
+        const pnl = marketValue - costBasis;
+        const pnlPct = costBasis ? (pnl / costBasis) * 100 : 0;
+        return {
+          ...h,
+          currentPrice,
+          marketValue,
+          costBasis,
+          pnl,
+          pnlPct
+        };
+      });
+
+      const totalValue = rows.reduce((sum, row) => sum + row.marketValue, 0);
+      rows.forEach(row => {
+        row.allocationPct = totalValue ? (row.marketValue / totalValue) * 100 : 0;
+      });
+      return rows;
+    }
+
+    function renderSummary(rows) {
+      const totalValue = rows.reduce((sum, row) => sum + row.marketValue, 0);
+      const totalCost = rows.reduce((sum, row) => sum + row.costBasis, 0);
+      const totalPnL = totalValue - totalCost;
+      const totalPnLPct = totalCost ? (totalPnL / totalCost) * 100 : 0;
+
+      const best = [...rows].sort((a, b) => b.pnlPct - a.pnlPct)[0];
+      const largest = [...rows].sort((a, b) => b.allocationPct - a.allocationPct)[0];
+
+      document.getElementById('portfolioValue').textContent = currency(totalValue);
+      document.getElementById('portfolioCost').textContent = `Cost basis: ${currency(totalCost)}`;
+
+      const pnlEl = document.getElementById('portfolioPnL');
+      pnlEl.textContent = currency(totalPnL);
+      pnlEl.className = `summary-value ${totalPnL >= 0 ? 'positive' : 'negative'}`;
+
+      const pnlPctEl = document.getElementById('portfolioPnLPct');
+      pnlPctEl.textContent = pct(totalPnLPct);
+      pnlPctEl.className = `summary-sub ${totalPnLPct >= 0 ? 'positive' : 'negative'}`;
+
+      document.getElementById('bestPosition').textContent = best.ticker;
+      document.getElementById('bestPosition').className = `summary-value ${best.pnl >= 0 ? 'positive' : 'negative'}`;
+      document.getElementById('bestPositionDetail').textContent = `${pct(best.pnlPct)} | ${currency(best.pnl)}`;
+
+      document.getElementById('largestAllocation').textContent = largest.ticker;
+      document.getElementById('largestAllocationDetail').textContent = `${largest.allocationPct.toFixed(2)}% of portfolio`;
+
+      const savedAt = getSavedAt();
+      document.getElementById('lastUpdatedBadge').textContent = savedAt
+        ? `Last updated: ${new Date(savedAt).toLocaleString()}`
+        : 'Last updated: using cost basis';
+    }
+
+    function renderTable(rows) {
+      const body = document.getElementById('positionsBody');
+      body.innerHTML = rows
+        .sort((a, b) => b.marketValue - a.marketValue)
+        .map(row => `
+          <tr>
+            <td class="ticker">${row.ticker}</td>
+            <td class="num">${row.shares.toFixed(6)}</td>
+            <td class="num">${currency(row.avgCost)}</td>
+            <td class="num">${currency(row.currentPrice)}</td>
+            <td class="num">${currency(row.marketValue)}</td>
+            <td class="num">${currency(row.costBasis)}</td>
+            <td class="num ${row.pnl >= 0 ? 'positive' : 'negative'}">${currency(row.pnl)}</td>
+            <td class="num ${row.pnlPct >= 0 ? 'positive' : 'negative'}">${pct(row.pnlPct)}</td>
+            <td class="num">${row.allocationPct.toFixed(2)}%</td>
+          </tr>
+        `)
+        .join('');
+    }
+
+    function renderAllocation(rows) {
+      const wrap = document.getElementById('allocationBars');
+      const sorted = [...rows].sort((a, b) => b.allocationPct - a.allocationPct);
+      wrap.innerHTML = sorted.map(row => `
+        <div class="bar-item">
+          <div class="bar-head">
+            <span><strong>${row.ticker}</strong> <span class="mini">${currency(row.marketValue)}</span></span>
+            <span>${row.allocationPct.toFixed(2)}%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${Math.max(2, row.allocationPct)}%"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderValueChart(rows) {
+      const canvas = document.getElementById('valueChart');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      const padding = { top: 20, right: 20, bottom: 30, left: 54 };
+
+      ctx.clearRect(0, 0, width, height);
+
+      const data = [...rows].sort((a, b) => b.marketValue - a.marketValue);
+      const maxValue = Math.max(...data.map(d => d.marketValue), 1);
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const barGap = 12;
+      const barWidth = (chartWidth - barGap * (data.length - 1)) / data.length;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1;
+      ctx.font = '12px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.65)';
+
+      for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (chartHeight / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        const labelValue = maxValue - (maxValue / 4) * i;
+        ctx.fillText(`$${Math.round(labelValue).toLocaleString()}`, 6, y + 4);
+      }
+
+      data.forEach((item, index) => {
+        const x = padding.left + index * (barWidth + barGap);
+        const barHeight = (item.marketValue / maxValue) * chartHeight;
+        const y = padding.top + chartHeight - barHeight;
+
+        const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
+        gradient.addColorStop(0, '#8ab4ff');
+        gradient.addColorStop(1, '#7c4dff');
+
+        ctx.fillStyle = gradient;
+        roundRect(ctx, x, y, barWidth, barHeight, 10, true, false);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.textAlign = 'center';
+        ctx.fillText(item.ticker, x + barWidth / 2, height - 10);
+      });
+
+      ctx.textAlign = 'left';
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      if (typeof radius === 'number') {
+        radius = { tl: radius, tr: radius, br: radius, bl: radius };
+      }
+      ctx.beginPath();
+      ctx.moveTo(x + radius.tl, y);
+      ctx.lineTo(x + width - radius.tr, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+      ctx.lineTo(x + width, y + height - radius.br);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+      ctx.lineTo(x + radius.bl, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+      ctx.lineTo(x, y + radius.tl);
+      ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    function renderAll() {
+      const rows = computeRows();
+      renderSummary(rows);
+      renderTable(rows);
+      renderAllocation(rows);
+      renderValueChart(rows);
+    }
+
+    document.getElementById('savePricesBtn').addEventListener('click', () => {
+      const prices = getEditorPrices();
+      savePrices(prices);
+      renderAll();
+      alert('Prices saved in this browser.');
+    });
+
+    document.getElementById('clearSavedBtn').addEventListener('click', () => {
+      clearSavedPrices();
+      buildPriceEditor();
+      renderAll();
+      alert('Saved prices cleared. The dashboard is back to your cost basis.');
+    });
+
+    document.getElementById('resetToCostBtn').addEventListener('click', () => {
+      clearSavedPrices();
+      savePrices(Object.fromEntries(holdings.map(h => [h.ticker, h.avgCost])));
+      buildPriceEditor();
+      renderAll();
+      alert('All current prices reset to cost basis.');
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const rows = computeRows();
+      const snapshot = {
+        exportedAt: new Date().toISOString(),
+        positions: rows.map(row => ({
+          ticker: row.ticker,
+          shares: row.shares,
+          avgCost: row.avgCost,
+          currentPrice: row.currentPrice,
+          marketValue: row.marketValue,
+          costBasis: row.costBasis,
+          gainLoss: row.pnl,
+          gainLossPct: row.pnlPct,
+          allocationPct: row.allocationPct
+        }))
+      };
+
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'portfolio-snapshot.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+    });
+
+    buildPriceEditor();
+    renderAll();
+  </script>
+</body>
+</html>
