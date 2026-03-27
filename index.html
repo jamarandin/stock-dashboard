@@ -556,7 +556,7 @@
     }
 
     async function fetchQuote(ticker) {
-      const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_API_KEY}&t=${Date.now()}`;
+      const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${d73dm2hr01qjjol2lqq0d73dm2hr01qjjol2lqqg}&t=${Date.now()}`;
       const response = await fetch(url, { cache: "no-store" });
 
       if (!response.ok) {
