@@ -1,962 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Defense & AI Portfolio Tracker</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --bg: #020817;
-      --bg-2: #06122a;
-      --panel: rgba(12, 24, 52, 0.82);
-      --panel-2: rgba(15, 23, 42, 0.9);
-      --text: #f5f7fb;
-      --muted: #a7b1c7;
-      --line: rgba(255, 255, 255, 0.08);
-      --shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
-      --positive: #34d399;
-      --negative: #f87171;
-      --accent: #60a5fa;
-      --accent-2: #8b5cf6;
-      --pill: rgba(255, 255, 255, 0.06);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PORTFOLIO TRACKER — Defense & AI Positions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    * {
-      box-sizing: border-box;
-    }
+:root {
+  --bg: #080c10;
+  --bg-card: #0d1219;
+  --bg-surface: #131b24;
+  --border: #1a2535;
+  --border-lit: #243346;
+  --green: #00e5a0;
+  --green-dim: rgba(0,229,160,0.12);
+  --red: #ff4060;
+  --red-dim: rgba(255,64,96,0.12);
+  --amber: #ffc240;
+  --amber-dim: rgba(255,194,64,0.12);
+  --cyan: #00cfff;
+  --text: rgba(255,255,255,0.90);
+  --text-2: rgba(255,255,255,0.55);
+  --text-3: rgba(255,255,255,0.30);
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(96, 165, 250, 0.12), transparent 28%),
-        radial-gradient(circle at top right, rgba(139, 92, 246, 0.10), transparent 30%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
-      min-height: 100vh;
-    }
+html { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+body { min-height: 100vh; }
 
-    .wrap {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 40px 24px 72px;
-    }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-lit); border-radius: 2px; }
 
-    .hero {
-      padding: 8px 0 28px;
-    }
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(8,12,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex; align-items: center; gap: 32px; height: 52px;
+}
+.nav-brand { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--green); }
+.nav-links { display: flex; gap: 24px; margin-left: auto; }
+.nav-links a { font-size: 11px; font-family: var(--mono); color: var(--text-2); text-decoration: none; letter-spacing: 1px; transition: color .2s; }
+.nav-links a:hover { color: var(--green); }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; margin-left: auto; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    .eyebrow {
-      font-size: 0.88rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
+/* HERO */
+.hero { padding: 48px 32px 32px; border-bottom: 1px solid var(--border); }
+.hero-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+.hero-title { font-size: 11px; font-family: var(--mono); letter-spacing: 4px; color: var(--text-2); margin-bottom: 8px; }
+.hero-name { font-size: 36px; font-weight: 800; line-height: 1.1; }
+.hero-name span { color: var(--green); }
+.hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+.stat { }
+.stat-label { font-size: 10px; font-family: var(--mono); letter-spacing: 2px; color: var(--text-3); margin-bottom: 4px; }
+.stat-value { font-size: 24px; font-weight: 700; font-family: var(--mono); }
+.stat-value.pos { color: var(--green); }
+.stat-value.neg { color: var(--red); }
+.last-updated { font-size: 10px; font-family: var(--mono); color: var(--text-3); margin-top: 16px; }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(2.6rem, 5vw, 4.6rem);
-      line-height: 0.96;
-      letter-spacing: -0.05em;
-      font-weight: 700;
-      max-width: 980px;
-    }
+/* SECTIONS */
+.section { padding: 40px 32px; border-bottom: 1px solid var(--border); }
+.section-label { font-size: 10px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 6px; }
+.section-title { font-size: 18px; font-weight: 700; margin-bottom: 28px; }
 
-    .subtitle {
-      margin-top: 16px;
-      max-width: 860px;
-      font-size: 1.16rem;
-      line-height: 1.55;
-      color: var(--muted);
-      letter-spacing: -0.01em;
-    }
+/* VALUE SNAPSHOT TABLE */
+.snap-table { width: 100%; border-collapse: collapse; }
+.snap-table th { font-size: 10px; font-family: var(--mono); letter-spacing: 2px; color: var(--text-3); text-align: left; padding: 0 16px 12px 16px; border-bottom: 1px solid var(--border); }
+.snap-table th.right { text-align: right; }
+.snap-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 13px; }
+.snap-table tbody tr:last-child td { border-bottom: none; }
+.snap-table tbody tr:hover td { background: var(--bg-surface); }
+.ticker-cell { font-size: 15px; font-weight: 700; color: var(--green); }
+.right-cell { text-align: right; }
+.gain { color: var(--green); }
+.loss { color: var(--red); }
 
-    .pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 24px;
-    }
+/* CHARTS GRID */
+.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+.chart-card-label { font-size: 10px; font-family: var(--mono); letter-spacing: 3px; color: var(--text-3); margin-bottom: 4px; }
+.chart-card-title { font-size: 14px; font-weight: 700; margin-bottom: 20px; }
+.chart-wrap { position: relative; height: 240px; }
 
-    .pill {
-      background: var(--pill);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 0.94rem;
-      color: #d6dceb;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
+/* TIMING GRID */
+.timing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.timing-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; position: relative; overflow: hidden; }
+.timing-card.buy { border-left: 3px solid var(--green); }
+.timing-card.watch { border-left: 3px solid var(--amber); }
+.timing-card.wait { border-left: 3px solid var(--red); }
+.timing-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.timing-ticker { font-family: var(--mono); font-size: 18px; font-weight: 700; }
+.timing-card.buy .timing-ticker { color: var(--green); }
+.timing-card.watch .timing-ticker { color: var(--amber); }
+.timing-card.wait .timing-ticker { color: var(--red); }
+.signal-badge { font-size: 9px; font-family: var(--mono); letter-spacing: 2px; padding: 3px 8px; border-radius: 3px; font-weight: 700; }
+.signal-badge.buy { background: var(--green-dim); color: var(--green); }
+.signal-badge.watch { background: var(--amber-dim); color: var(--amber); }
+.signal-badge.wait { background: var(--red-dim); color: var(--red); }
+.timing-price { font-family: var(--mono); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.timing-change { font-family: var(--mono); font-size: 12px; margin-bottom: 12px; }
+.timing-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.timing-meta-item { }
+.timing-meta-label { font-size: 9px; font-family: var(--mono); color: var(--text-3); letter-spacing: 1px; margin-bottom: 2px; }
+.timing-meta-val { font-size: 12px; font-family: var(--mono); color: var(--text-2); }
+.timing-reason { font-size: 11px; color: var(--text-2); line-height: 1.6; font-family: var(--sans); }
+.loading-spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border-lit); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 22px;
-    }
+/* API KEY SETUP */
+.api-setup { background: var(--bg-card); border: 1px solid var(--amber); border-radius: 8px; padding: 24px; margin-bottom: 32px; display: none; }
+.api-setup.visible { display: block; }
+.api-setup-title { font-weight: 700; margin-bottom: 8px; color: var(--amber); }
+.api-setup p { font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
+.api-input-row { display: flex; gap: 12px; }
+.api-input { background: var(--bg-surface); border: 1px solid var(--border-lit); border-radius: 6px; padding: 10px 14px; color: var(--text); font-family: var(--mono); font-size: 13px; flex: 1; outline: none; }
+.api-input:focus { border-color: var(--amber); }
+.btn { background: var(--green); color: #000; border: none; border-radius: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: opacity .2s; }
+.btn:hover { opacity: .85; }
+.btn.amber { background: var(--amber); }
 
-    button {
-      border: 0;
-      cursor: pointer;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
-    }
+/* ERROR */
+.error-msg { font-family: var(--mono); font-size: 11px; color: var(--red); margin-top: 8px; }
 
-    button:hover {
-      transform: translateY(-1px);
-    }
+/* FOOTER */
+footer { padding: 32px; text-align: center; font-size: 11px; color: var(--text-3); font-family: var(--mono); line-height: 2; }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), #3b82f6);
-      color: white;
-      box-shadow: 0 10px 28px rgba(59, 130, 246, 0.28);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      padding: 24px;
-    }
-
-    .chart-card {
-      margin-bottom: 18px;
-    }
-
-    .card-title {
-      font-size: 1.45rem;
-      font-weight: 650;
-      letter-spacing: -0.03em;
-      margin: 0;
-    }
-
-    .card-subtitle {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 0.98rem;
-      line-height: 1.45;
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 18px;
-    }
-
-    .chart-wrap {
-      position: relative;
-      min-height: 420px;
-    }
-
-    #performanceChart {
-      width: 100%;
-      height: 420px;
-      display: block;
-    }
-
-    .chart-status {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .metric-label {
-      color: var(--muted);
-      font-size: 0.98rem;
-      margin-bottom: 8px;
-    }
-
-    .metric-value {
-      font-size: clamp(2rem, 3vw, 2.8rem);
-      line-height: 1;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-      margin-bottom: 8px;
-    }
-
-    .metric-meta {
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .positive {
-      color: var(--positive);
-    }
-
-    .negative {
-      color: var(--negative);
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1.9fr 1fr;
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .stack {
-      display: grid;
-      gap: 18px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 18px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 940px;
-    }
-
-    thead th {
-      text-align: left;
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 0 10px 12px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    tbody td {
-      padding: 14px 10px;
-      border-bottom: 1px solid var(--line);
-      font-size: 0.98rem;
-      vertical-align: middle;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .ticker {
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .status-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .status-row:last-child {
-      border-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .status-label {
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .status-value {
-      text-align: right;
-      font-weight: 600;
-      max-width: 62%;
-      color: var(--text);
-    }
-
-    .allocation-list,
-    .snapshot-list {
-      display: grid;
-      gap: 18px;
-    }
-
-    .alloc-item,
-    .snapshot-item {
-      display: grid;
-      gap: 8px;
-    }
-
-    .alloc-top,
-    .snapshot-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: baseline;
-      font-size: 1.02rem;
-    }
-
-    .alloc-left strong,
-    .snapshot-left strong {
-      font-size: 1.02rem;
-      letter-spacing: -0.02em;
-    }
-
-    .alloc-left span,
-    .snapshot-left span {
-      color: var(--muted);
-      margin-left: 6px;
-    }
-
-    .alloc-right,
-    .snapshot-right {
-      color: #e4e8f2;
-      font-weight: 600;
-    }
-
-    .alloc-bar,
-    .snapshot-bar {
-      width: 100%;
-      height: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .alloc-fill,
-    .snapshot-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      width: 0;
-    }
-
-    .foot {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 1100px) {
-      .grid-4 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-
-      #performanceChart {
-        height: 340px;
-      }
-
-      .chart-wrap {
-        min-height: 340px;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .wrap {
-        padding: 28px 16px 56px;
-      }
-
-      .grid-4 {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        padding: 20px;
-      }
-
-      .subtitle {
-        font-size: 1.04rem;
-      }
-
-      .status-value {
-        max-width: 56%;
-      }
-
-      #performanceChart {
-        height: 300px;
-      }
-
-      .chart-wrap {
-        min-height: 300px;
-      }
-    }
-  </style>
+@media (max-width: 768px) {
+  .hero, .section { padding: 32px 16px; }
+  nav { padding: 0 16px; }
+  .charts-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; }
+  .timing-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div class="eyebrow">Live thesis tracking</div>
-      <h1>Defense &amp; AI Portfolio Tracker</h1>
-      <div class="subtitle">
-        Tracking positions aligned to defense, AI infrastructure, and geopolitical momentum. Live market data updates the portfolio automatically so you can see performance, allocation, and value concentration at a glance.
-      </div>
 
-      <div class="pills">
-        <div class="pill" id="pillMarket">Market data: connecting…</div>
-        <div class="pill" id="pillUpdated">Last updated: --</div>
-        <div class="pill">7 positions</div>
-        <div class="pill">Thesis: defense + AI + war-driven demand</div>
-      </div>
-
-      <div class="toolbar">
-        <button class="btn-primary" id="refreshBtn">Refresh now</button>
-        <button class="btn-secondary" id="toggleAutoBtn">Pause auto-refresh</button>
-      </div>
-    </section>
-
-    <section class="card chart-card">
-      <div class="card-top">
-        <div>
-          <div class="card-title">YTD Performance — Indexed to 100</div>
-          <div class="card-subtitle">Relative performance of each position since the start of the year.</div>
-        </div>
-      </div>
-      <div class="chart-wrap">
-        <canvas id="performanceChart"></canvas>
-      </div>
-      <div class="chart-status" id="chartStatus">Loading historical performance…</div>
-    </section>
-
-    <section class="grid-4">
-      <div class="card">
-        <div class="metric-label">Portfolio market value</div>
-        <div class="metric-value" id="metricValue">$0.00</div>
-        <div class="metric-meta" id="metricCost">Cost basis: $0.00</div>
-      </div>
-
-      <div class="card">
-        <div class="metric-label">Unrealized gain / loss</div>
-        <div class="metric-value" id="metricPnL">$0.00</div>
-        <div class="metric-meta" id="metricPnLPct">0.00%</div>
-      </div>
-
-      <div class="card">
-        <div class="metric-label">Best position</div>
-        <div class="metric-value" id="metricBest">--</div>
-        <div class="metric-meta" id="metricBestMeta">--</div>
-      </div>
-
-      <div class="card">
-        <div class="metric-label">Largest allocation</div>
-        <div class="metric-value" id="metricLargest">--</div>
-        <div class="metric-meta" id="metricLargestMeta">--</div>
-      </div>
-    </section>
-
-    <section class="main-grid">
-      <div class="stack">
-        <div class="card">
-          <div class="card-top">
-            <div>
-              <div class="card-title">Your positions</div>
-              <div class="card-subtitle">Live current price, market value, and unrealized gain/loss versus your average cost.</div>
-            </div>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ticker</th>
-                  <th>Shares</th>
-                  <th>Avg Cost</th>
-                  <th>Current Price</th>
-                  <th>Market Value</th>
-                  <th>Cost Basis</th>
-                  <th>Gain / Loss</th>
-                  <th>Gain / Loss %</th>
-                  <th>Allocation</th>
-                </tr>
-              </thead>
-              <tbody id="positionsBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-top">
-            <div>
-              <div class="card-title">Allocation by position</div>
-              <div class="card-subtitle">Based on current market value.</div>
-            </div>
-          </div>
-          <div class="allocation-list" id="allocationList"></div>
-        </div>
-      </div>
-
-      <div class="stack">
-        <div class="card">
-          <div class="card-top">
-            <div>
-              <div class="card-title">Portfolio status</div>
-              <div class="card-subtitle">Live quote status, refresh behavior, and source health.</div>
-            </div>
-          </div>
-
-          <div class="status-list">
-            <div class="status-row">
-              <div class="status-label">Quote source</div>
-              <div class="status-value">Finnhub</div>
-            </div>
-            <div class="status-row">
-              <div class="status-label">Auto-refresh</div>
-              <div class="status-value" id="statusAuto">On</div>
-            </div>
-            <div class="status-row">
-              <div class="status-label">Refresh interval</div>
-              <div class="status-value">2 minutes</div>
-            </div>
-            <div class="status-row">
-              <div class="status-label">Tracked tickers</div>
-              <div class="status-value">DRS, RTX, MRCY, LDOS, PLTR, AGH, UMAC</div>
-            </div>
-            <div class="status-row">
-              <div class="status-label">Last quote result</div>
-              <div class="status-value" id="statusResult">Waiting for first refresh…</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-top">
-            <div>
-              <div class="card-title">Value snapshot</div>
-              <div class="card-subtitle">Simple visual of where each position stands right now.</div>
-            </div>
-          </div>
-          <div class="snapshot-list" id="snapshotList"></div>
-          <div class="foot">Bars reflect current market value and update with each live quote refresh.</div>
-        </div>
-      </div>
-    </section>
+<nav>
+  <span class="nav-brand">PORTFOLIO ▸ TRACKER</span>
+  <div class="live-dot" id="liveDot" title="Data status"></div>
+  <div class="nav-links">
+    <a href="#snapshot">Snapshot</a>
+    <a href="#charts">Performance</a>
+    <a href="#timing">Buy Signals</a>
   </div>
+</nav>
 
-  <script>
-    const FINNHUB_API_KEY = "d73e161r01qjjol2ndb0d73e161r01qjjol2ndbg";
-    const REFRESH_MS = 120000;
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="hero-title">DEFENSE & AI PORTFOLIO</div>
+      <div class="hero-name">Position <span>Dashboard</span></div>
+      <div class="last-updated" id="lastUpdated">Connecting to market data...</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-label">TOTAL INVESTED</div>
+        <div class="stat-value" id="totalInvested">$2,999.85</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">CURRENT VALUE</div>
+        <div class="stat-value" id="currentValue">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">TOTAL GAIN/LOSS</div>
+        <div class="stat-value" id="totalGainLoss">—</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    const positions = [
-      { ticker: "DRS", shares: 5.400676, avgCost: 46.29 },
-      { ticker: "RTX", shares: 3.634664, avgCost: 192.59 },
-      { ticker: "MRCY", shares: 3.292506, avgCost: 75.93 },
-      { ticker: "LDOS", shares: 3.168075, avgCost: 157.82 },
-      { ticker: "PLTR", shares: 5.392289, avgCost: 148.36 },
-      { ticker: "AGH", shares: 62.131868, avgCost: 4.02 },
-      { ticker: "UMAC", shares: 15.757957, avgCost: 15.87 }
-    ].map(p => ({
-      ...p,
-      currentPrice: p.avgCost,
-      marketValue: p.avgCost * p.shares,
-      costBasis: p.avgCost * p.shares,
-      gainLoss: 0,
-      gainLossPct: 0,
-      allocationPct: 0
-    }));
+<!-- API KEY SETUP -->
+<div class="section">
+  <div class="api-setup visible" id="apiSetup">
+    <div class="api-setup-title">⚡ Enter Your Finnhub API Key</div>
+    <p>Get your free key at <strong>finnhub.io/dashboard</strong>. Stored locally in your browser — never sent anywhere else.</p>
+    <div class="api-input-row">
+      <input class="api-input" id="apiKeyInput" type="password" placeholder="e.g. ct1abc2def3ghi4jkl5..." autocomplete="off">
+      <button class="btn amber" onclick="saveKey()">CONNECT</button>
+    </div>
+    <div class="error-msg" id="apiError"></div>
+  </div>
+</div>
 
-    const chartColors = [
-      "#34d399",
-      "#60a5fa",
-      "#f59e0b",
-      "#a855f7",
-      "#fb7185",
-      "#22d3ee",
-      "#8b5cf6"
-    ];
+<!-- VALUE SNAPSHOT -->
+<div class="section" id="snapshot">
+  <div class="section-label">01 — VALUE SNAPSHOT</div>
+  <div class="section-title">Your Positions</div>
+  <table class="snap-table">
+    <thead>
+      <tr>
+        <th>TICKER</th>
+        <th class="right">SHARES</th>
+        <th class="right">AVG COST</th>
+        <th class="right">CURRENT</th>
+        <th class="right">INVESTED</th>
+        <th class="right">VALUE</th>
+        <th class="right">GAIN/LOSS</th>
+        <th class="right">RETURN</th>
+      </tr>
+    </thead>
+    <tbody id="snapshotBody">
+      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3);font-family:var(--mono);font-size:12px;">Waiting for API key...</td></tr>
+    </tbody>
+  </table>
+</div>
 
-    let autoRefresh = true;
-    let timer = null;
-    let performanceChart = null;
+<!-- CHARTS -->
+<div class="section" id="charts">
+  <div class="section-label">02 — PERFORMANCE</div>
+  <div class="section-title">YTD Indexed & Allocation</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-card-label">PERFORMANCE</div>
+      <div class="chart-card-title">YTD Return — Indexed to 100</div>
+      <div class="chart-wrap"><canvas id="indexedChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-label">ALLOCATION</div>
+      <div class="chart-card-title">Portfolio Weight by Position</div>
+      <div class="chart-wrap"><canvas id="allocChart"></canvas></div>
+    </div>
+  </div>
+</div>
 
-    const money = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD"
-    });
+<!-- BUY TIMING SIGNALS -->
+<div class="section" id="timing">
+  <div class="section-label">03 — BUY TIMING SIGNAL GRID</div>
+  <div class="section-title">When to Add More</div>
+  <div class="timing-grid" id="timingGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-3);font-family:var(--mono);font-size:12px;">Waiting for market data...</div>
+  </div>
+</div>
 
-    const pct = new Intl.NumberFormat("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+<footer>
+  PORTFOLIO TRACKER — Live data via Finnhub.io<br>
+  Auto-refreshes every 60 seconds during market hours.<br>
+  <span style="color:var(--red)">NOT FINANCIAL ADVICE. For personal tracking only.</span>
+</footer>
 
-    function formatMoney(v) {
-      return money.format(v);
+<script>
+// ─── YOUR POSITIONS (edit these) ───────────────────────────────────────────
+const POSITIONS = [
+  { ticker: 'DRS',  shares: 5.400676,  avgCost: 46.29,  invested: 250.00  },
+  { ticker: 'RTX',  shares: 3.634664,  avgCost: 192.59, invested: 700.00  },
+  { ticker: 'MRCY', shares: 3.292506,  avgCost: 75.93,  invested: 250.00  },
+  { ticker: 'LDOS', shares: 3.168075,  avgCost: 157.82, invested: 500.00  },
+  { ticker: 'PLTR', shares: 5.392289,  avgCost: 148.36, invested: 800.00  },
+  { ticker: 'AGH',  shares: 62.131868, avgCost: 4.02,   invested: 249.77  },
+  { ticker: 'UMAC', shares: 15.757957, avgCost: 15.87,  invested: 250.08  },
+];
+
+const COLORS = ['#00e5a0','#00cfff','#ffc240','#ff4060','#a78bfa','#fb923c','#34d399'];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let apiKey = localStorage.getItem('finnhub_key') || '';
+let quoteData = {};
+let indexedChart, allocChart;
+let refreshTimer;
+
+// ─── KEY MANAGEMENT ────────────────────────────────────────────────────────
+function saveKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) return showError('Please enter your API key.');
+  apiKey = val;
+  localStorage.setItem('finnhub_key', val);
+  document.getElementById('apiSetup').classList.remove('visible');
+  fetchAll();
+}
+
+function showError(msg) {
+  document.getElementById('apiError').textContent = msg;
+}
+
+// ─── FETCH ─────────────────────────────────────────────────────────────────
+async function fetchQuote(ticker) {
+  const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function fetchAll() {
+  if (!apiKey) return;
+  document.getElementById('liveDot').style.background = 'var(--amber)';
+
+  const results = await Promise.allSettled(POSITIONS.map(p => fetchQuote(p.ticker)));
+  
+  let anyFail = false;
+  results.forEach((res, i) => {
+    const ticker = POSITIONS[i].ticker;
+    if (res.status === 'fulfilled' && res.value.c > 0) {
+      quoteData[ticker] = res.value; // {c: current, pc: prevClose, h, l, o}
+    } else {
+      anyFail = true;
+      console.warn(`Failed to fetch ${ticker}`, res.reason || res.value);
     }
+  });
 
-    function formatPct(v) {
-      const sign = v > 0 ? "+" : "";
-      return `${sign}${pct.format(v)}%`;
-    }
+  if (anyFail && Object.keys(quoteData).length === 0) {
+    document.getElementById('liveDot').style.background = 'var(--red)';
+    document.getElementById('apiSetup').classList.add('visible');
+    showError('Could not fetch data — check your API key and try again.');
+    return;
+  }
 
-    function calculatePortfolio() {
-      let totalMarketValue = 0;
-      let totalCostBasis = 0;
+  document.getElementById('liveDot').style.background = 'var(--green)';
+  document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()} — Auto-refreshing every 60s`;
+  
+  renderAll();
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(fetchAll, 60000);
+}
 
-      positions.forEach(pos => {
-        pos.marketValue = pos.currentPrice * pos.shares;
-        pos.costBasis = pos.avgCost * pos.shares;
-        pos.gainLoss = pos.marketValue - pos.costBasis;
-        pos.gainLossPct = pos.costBasis ? (pos.gainLoss / pos.costBasis) * 100 : 0;
-        totalMarketValue += pos.marketValue;
-        totalCostBasis += pos.costBasis;
-      });
+// ─── RENDER ────────────────────────────────────────────────────────────────
+function fmt(n, dec=2) { return n.toFixed(dec); }
+function fmtDollar(n) { return (n >= 0 ? '+$' : '-$') + Math.abs(n).toFixed(2); }
+function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
 
-      positions.forEach(pos => {
-        pos.allocationPct = totalMarketValue ? (pos.marketValue / totalMarketValue) * 100 : 0;
-      });
+function renderAll() {
+  renderSnapshot();
+  renderCharts();
+  renderTiming();
+}
 
-      return {
-        totalMarketValue,
-        totalCostBasis,
-        totalGainLoss: totalMarketValue - totalCostBasis,
-        totalGainLossPct: totalCostBasis ? ((totalMarketValue - totalCostBasis) / totalCostBasis) * 100 : 0
-      };
-    }
+function renderSnapshot() {
+  let totalInvested = 0, totalValue = 0;
+  const rows = POSITIONS.map((p, i) => {
+    const q = quoteData[p.ticker];
+    const price = q ? q.c : null;
+    const value = price ? price * p.shares : null;
+    const gain = value ? value - p.invested : null;
+    const pct = gain ? (gain / p.invested) * 100 : null;
+    totalInvested += p.invested;
+    if (value) totalValue += value;
 
-    function renderMetrics(summary) {
-      document.getElementById("metricValue").textContent = formatMoney(summary.totalMarketValue);
-      document.getElementById("metricCost").textContent = `Cost basis: ${formatMoney(summary.totalCostBasis)}`;
+    const priceCell = price ? `$${fmt(price)}` : '<span style="color:var(--text-3)">—</span>';
+    const valueCell = value ? `$${fmt(value)}` : '—';
+    const gainCell = gain !== null ? `<span class="${gain >= 0 ? 'gain' : 'loss'}">${fmtDollar(gain)}</span>` : '—';
+    const pctCell = pct !== null ? `<span class="${pct >= 0 ? 'gain' : 'loss'}">${fmtPct(pct)}</span>` : '—';
 
-      const pnlEl = document.getElementById("metricPnL");
-      pnlEl.textContent = formatMoney(summary.totalGainLoss);
-      pnlEl.className = `metric-value ${summary.totalGainLoss >= 0 ? "positive" : "negative"}`;
+    return `<tr>
+      <td class="ticker-cell">${p.ticker}</td>
+      <td class="right-cell">${p.shares.toFixed(4)}</td>
+      <td class="right-cell">$${fmt(p.avgCost)}</td>
+      <td class="right-cell">${priceCell}</td>
+      <td class="right-cell">$${fmt(p.invested)}</td>
+      <td class="right-cell">${valueCell}</td>
+      <td class="right-cell">${gainCell}</td>
+      <td class="right-cell">${pctCell}</td>
+    </tr>`;
+  });
 
-      const pnlPctEl = document.getElementById("metricPnLPct");
-      pnlPctEl.textContent = formatPct(summary.totalGainLossPct);
-      pnlPctEl.className = `metric-meta ${summary.totalGainLossPct >= 0 ? "positive" : "negative"}`;
+  document.getElementById('snapshotBody').innerHTML = rows.join('');
 
-      const best = [...positions].sort((a, b) => b.gainLossPct - a.gainLossPct)[0];
-      document.getElementById("metricBest").textContent = best.ticker;
-      document.getElementById("metricBestMeta").textContent = `${formatPct(best.gainLossPct)} | ${formatMoney(best.gainLoss)}`;
-      document.getElementById("metricBestMeta").className = `metric-meta ${best.gainLoss >= 0 ? "positive" : "negative"}`;
+  const totalGain = totalValue - totalInvested;
+  const totalPct = totalInvested ? (totalGain / totalInvested) * 100 : 0;
 
-      const largest = [...positions].sort((a, b) => b.marketValue - a.marketValue)[0];
-      document.getElementById("metricLargest").textContent = largest.ticker;
-      document.getElementById("metricLargestMeta").textContent = `${pct.format(largest.allocationPct)}% of portfolio`;
-      document.getElementById("metricLargestMeta").className = "metric-meta";
-    }
+  document.getElementById('totalInvested').textContent = `$${totalInvested.toFixed(2)}`;
+  const cvEl = document.getElementById('currentValue');
+  cvEl.textContent = totalValue ? `$${totalValue.toFixed(2)}` : '—';
 
-    function renderTable() {
-      const tbody = document.getElementById("positionsBody");
-      tbody.innerHTML = "";
+  const glEl = document.getElementById('totalGainLoss');
+  if (totalValue) {
+    glEl.textContent = `${fmtDollar(totalGain)} (${fmtPct(totalPct)})`;
+    glEl.className = `stat-value ${totalGain >= 0 ? 'pos' : 'neg'}`;
+  }
+}
 
-      [...positions]
-        .sort((a, b) => b.marketValue - a.marketValue)
-        .forEach(pos => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><span class="ticker">${pos.ticker}</span></td>
-            <td>${pos.shares.toFixed(6)}</td>
-            <td>${formatMoney(pos.avgCost)}</td>
-            <td>${formatMoney(pos.currentPrice)}</td>
-            <td>${formatMoney(pos.marketValue)}</td>
-            <td>${formatMoney(pos.costBasis)}</td>
-            <td class="${pos.gainLoss >= 0 ? "positive" : "negative"}">${formatMoney(pos.gainLoss)}</td>
-            <td class="${pos.gainLossPct >= 0 ? "positive" : "negative"}">${formatPct(pos.gainLossPct)}</td>
-            <td>${pct.format(pos.allocationPct)}%</td>
-          `;
-          tbody.appendChild(tr);
-        });
-    }
+function renderCharts() {
+  // ── YTD Indexed (bar chart of % returns vs 100 baseline)
+  const labels = [], returns = [], colors = [];
+  POSITIONS.forEach((p, i) => {
+    const q = quoteData[p.ticker];
+    if (!q) return;
+    const ret = ((q.c - p.avgCost) / p.avgCost) * 100;
+    labels.push(p.ticker);
+    returns.push(parseFloat((100 + ret).toFixed(2)));
+    colors.push(ret >= 0 ? COLORS[i % COLORS.length] : '#ff4060');
+  });
 
-    function renderAllocation() {
-      const list = document.getElementById("allocationList");
-      list.innerHTML = "";
-
-      [...positions]
-        .sort((a, b) => b.marketValue - a.marketValue)
-        .forEach(pos => {
-          const row = document.createElement("div");
-          row.className = "alloc-item";
-          row.innerHTML = `
-            <div class="alloc-top">
-              <div class="alloc-left"><strong>${pos.ticker}</strong><span>${formatMoney(pos.marketValue)}</span></div>
-              <div class="alloc-right">${pct.format(pos.allocationPct)}%</div>
-            </div>
-            <div class="alloc-bar">
-              <div class="alloc-fill" style="width:${Math.max(0, Math.min(pos.allocationPct, 100))}%"></div>
-            </div>
-          `;
-          list.appendChild(row);
-        });
-    }
-
-    function renderSnapshot() {
-      const list = document.getElementById("snapshotList");
-      list.innerHTML = "";
-      const maxValue = Math.max(...positions.map(p => p.marketValue), 1);
-
-      [...positions]
-        .sort((a, b) => b.marketValue - a.marketValue)
-        .forEach(pos => {
-          const width = (pos.marketValue / maxValue) * 100;
-          const row = document.createElement("div");
-          row.className = "snapshot-item";
-          row.innerHTML = `
-            <div class="snapshot-top">
-              <div class="snapshot-left"><strong>${pos.ticker}</strong><span>${formatMoney(pos.marketValue)}</span></div>
-              <div class="snapshot-right">${pct.format(pos.allocationPct)}%</div>
-            </div>
-            <div class="snapshot-bar">
-              <div class="snapshot-fill" style="width:${width}%"></div>
-            </div>
-          `;
-          list.appendChild(row);
-        });
-    }
-
-    function renderAll() {
-      const summary = calculatePortfolio();
-      renderMetrics(summary);
-      renderTable();
-      renderAllocation();
-      renderSnapshot();
-    }
-
-    async function fetchQuote(ticker) {
-      const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_API_KEY}&t=${Date.now()}`;
-      const response = await fetch(url, { cache: "no-store" });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} for ${ticker}`);
-      }
-
-      const data = await response.json();
-
-      if (!data || typeof data.c !== "number" || data.c <= 0) {
-        throw new Error(`Invalid quote for ${ticker}`);
-      }
-
-      return data.c;
-    }
-
-    async function fetchCandleSeries(ticker) {
-      const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-      const from = Math.floor(startOfYear.getTime() / 1000);
-      const to = Math.floor(Date.now() / 1000);
-
-      const url = `https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${from}&to=${to}&token=${FINNHUB_API_KEY}&t=${Date.now()}`;
-      const response = await fetch(url, { cache: "no-store" });
-
-      if (!response.ok) {
-        throw new Error(`Candle HTTP ${response.status} for ${ticker}`);
-      }
-
-      const data = await response.json();
-
-      if (!data || data.s !== "ok" || !Array.isArray(data.c) || !Array.isArray(data.t) || !data.c.length) {
-        throw new Error(`Invalid candle data for ${ticker}`);
-      }
-
-      return {
-        closes: data.c,
-        timestamps: data.t
-      };
-    }
-
-    function normalizeTo100(arr) {
-      const base = arr[0];
-      return arr.map(v => (v / base) * 100);
-    }
-
-    function formatShortDate(unix) {
-      const d = new Date(unix * 1000);
-      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    }
-
-    async function buildPerformanceChart() {
-      const chartStatus = document.getElementById("chartStatus");
-      chartStatus.textContent = "Loading historical performance…";
-
-      const results = await Promise.allSettled(
-        positions.map(async (pos, idx) => {
-          const series = await fetchCandleSeries(pos.ticker);
-          return {
-            ticker: pos.ticker,
-            color: chartColors[idx % chartColors.length],
-            labels: series.timestamps.map(formatShortDate),
-            values: normalizeTo100(series.closes)
-          };
-        })
-      );
-
-      const successful = results
-        .filter(r => r.status === "fulfilled")
-        .map(r => r.value);
-
-      if (!successful.length) {
-        chartStatus.textContent = "Historical chart data could not be loaded.";
-        if (performanceChart) {
-          performanceChart.destroy();
-          performanceChart = null;
-        }
-        return;
-      }
-
-      const labels = successful[0].labels;
-
-      const datasets = successful.map(item => ({
-        label: item.ticker,
-        data: item.values,
-        borderColor: item.color,
-        backgroundColor: item.color,
+  if (indexedChart) indexedChart.destroy();
+  indexedChart = new Chart(document.getElementById('indexedChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Indexed Value',
+        data: returns,
+        backgroundColor: colors.map(c => c + '33'),
+        borderColor: colors,
         borderWidth: 2,
-        tension: 0.3,
-        pointRadius: 0,
-        pointHoverRadius: 3
-      }));
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#1a2535' }, ticks: { color: '#ffffff88', font: { family: 'Space Mono', size: 11 } } },
+        y: {
+          grid: { color: '#1a2535' }, ticks: { color: '#ffffff88', font: { family: 'Space Mono', size: 11 } },
+          min: Math.min(...returns) - 5,
+        }
+      },
+      animation: { duration: 600 }
+    }
+  });
 
-      const ctx = document.getElementById("performanceChart").getContext("2d");
+  // ── Allocation donut
+  const allocLabels = POSITIONS.map(p => p.ticker);
+  const allocData = POSITIONS.map(p => p.invested);
+  const totalInv = allocData.reduce((a,b)=>a+b,0);
 
-      if (performanceChart) {
-        performanceChart.destroy();
-      }
-
-      performanceChart = new Chart(ctx, {
-        type: "line",
-        data: { labels, datasets },
-        options: {
-          maintainAspectRatio: false,
-          responsive: true,
-          interaction: {
-            mode: "index",
-            intersect: false
-          },
-          plugins: {
-            legend: {
-              position: "top",
-              labels: {
-                color: "#cbd5e1",
-                usePointStyle: true,
-                pointStyle: "line",
-                boxWidth: 28,
-                padding: 18
-              }
-            },
-            tooltip: {
-              backgroundColor: "rgba(15, 23, 42, 0.95)",
-              titleColor: "#fff",
-              bodyColor: "#e5e7eb",
-              borderColor: "rgba(255,255,255,0.08)",
-              borderWidth: 1
-            }
-          },
-          scales: {
-            x: {
-              ticks: {
-                color: "#94a3b8",
-                maxTicksLimit: 8
-              },
-              grid: {
-                color: "rgba(255,255,255,0.06)"
-              }
-            },
-            y: {
-              ticks: {
-                color: "#94a3b8",
-                callback: value => value.toFixed(0)
-              },
-              grid: {
-                color: "rgba(255,255,255,0.06)"
-              }
+  if (allocChart) allocChart.destroy();
+  allocChart = new Chart(document.getElementById('allocChart'), {
+    type: 'doughnut',
+    data: {
+      labels: allocLabels,
+      datasets: [{
+        data: allocData,
+        backgroundColor: POSITIONS.map((_,i) => COLORS[i % COLORS.length] + '99'),
+        borderColor: POSITIONS.map((_,i) => COLORS[i % COLORS.length]),
+        borderWidth: 2,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: '#ffffff88', font: { family: 'Space Mono', size: 10 }, padding: 12,
+            generateLabels(chart) {
+              return chart.data.labels.map((l,i) => ({
+                text: `${l}  ${((allocData[i]/totalInv)*100).toFixed(1)}%`,
+                fillStyle: chart.data.datasets[0].backgroundColor[i],
+                strokeStyle: chart.data.datasets[0].borderColor[i],
+                lineWidth: 2, index: i
+              }));
             }
           }
         }
-      });
+      },
+      animation: { duration: 600 }
+    }
+  });
+}
 
-      const failed = results.filter(r => r.status === "rejected").length;
-      chartStatus.textContent = failed
-        ? `Historical chart loaded with ${successful.length} series. ${failed} failed.`
-        : `Historical chart loaded successfully for ${successful.length} positions.`;
+function renderTiming() {
+  const grid = document.getElementById('timingGrid');
+  
+  const cards = POSITIONS.map((p, i) => {
+    const q = quoteData[p.ticker];
+    if (!q) return `<div class="timing-card watch">
+      <div class="timing-top"><div class="timing-ticker">${p.ticker}</div><div class="signal-badge watch">LOADING</div></div>
+      <div class="timing-reason">Fetching live data...</div>
+    </div>`;
+
+    const price = q.c;
+    const prevClose = q.pc;
+    const dayChange = price - prevClose;
+    const dayChangePct = (dayChange / prevClose) * 100;
+    const costBasisGain = ((price - p.avgCost) / p.avgCost) * 100;
+
+    // Signal logic: simple heuristic based on cost basis & day movement
+    let signal, rationale;
+    if (costBasisGain < -5 && dayChangePct > -1) {
+      signal = 'buy';
+      rationale = `Down ${Math.abs(costBasisGain).toFixed(1)}% from your cost basis. Potential dip-buying opportunity if thesis is intact.`;
+    } else if (costBasisGain < -10) {
+      signal = 'buy';
+      rationale = `More than 10% below your avg cost. Consider averaging down if conviction remains high.`;
+    } else if (costBasisGain >= -5 && costBasisGain <= 5) {
+      signal = 'watch';
+      rationale = `Near your cost basis. Monitor for a confirmed pullback before adding to position.`;
+    } else if (costBasisGain > 20 && dayChangePct > 2) {
+      signal = 'watch';
+      rationale = `Up ${costBasisGain.toFixed(1)}% on a strong up day. Wait for consolidation before adding.`;
+    } else if (costBasisGain > 5) {
+      signal = 'wait';
+      rationale = `Already up ${costBasisGain.toFixed(1)}% from your entry. Don't chase — wait for a pullback.`;
+    } else {
+      signal = 'watch';
+      rationale = `Near fair value relative to your cost. Monitor momentum before adding.`;
     }
 
-    async function refreshQuotes() {
-      const pillMarket = document.getElementById("pillMarket");
-      const pillUpdated = document.getElementById("pillUpdated");
-      const statusResult = document.getElementById("statusResult");
+    const color = signal === 'buy' ? 'var(--green)' : signal === 'watch' ? 'var(--amber)' : 'var(--red)';
 
-      pillMarket.textContent = "Market data: refreshing…";
-      statusResult.textContent = "Fetching quotes…";
+    return `<div class="timing-card ${signal}">
+      <div class="timing-top">
+        <div class="timing-ticker">${p.ticker}</div>
+        <div class="signal-badge ${signal}">${signal.toUpperCase()}</div>
+      </div>
+      <div class="timing-price" style="color:${color}">$${fmt(price)}</div>
+      <div class="timing-change ${dayChange >= 0 ? 'gain' : 'loss'}">
+        ${dayChange >= 0 ? '▲' : '▼'} $${Math.abs(dayChange).toFixed(2)} (${fmtPct(dayChangePct)}) today
+      </div>
+      <div class="timing-meta">
+        <div class="timing-meta-item">
+          <div class="timing-meta-label">YOUR COST</div>
+          <div class="timing-meta-val">$${fmt(p.avgCost)}</div>
+        </div>
+        <div class="timing-meta-item">
+          <div class="timing-meta-label">VS COST BASIS</div>
+          <div class="timing-meta-val ${costBasisGain >= 0 ? 'gain' : 'loss'}">${fmtPct(costBasisGain)}</div>
+        </div>
+        <div class="timing-meta-item">
+          <div class="timing-meta-label">INVESTED</div>
+          <div class="timing-meta-val">$${fmt(p.invested)}</div>
+        </div>
+        <div class="timing-meta-item">
+          <div class="timing-meta-label">CURRENT VALUE</div>
+          <div class="timing-meta-val">$${fmt(price * p.shares)}</div>
+        </div>
+      </div>
+      <div class="timing-reason">${rationale}</div>
+    </div>`;
+  });
 
-      const successes = [];
-      const failures = [];
+  grid.innerHTML = cards.join('');
+}
 
-      for (const pos of positions) {
-        try {
-          const livePrice = await fetchQuote(pos.ticker);
-          pos.currentPrice = livePrice;
-          successes.push(pos.ticker);
-        } catch (error) {
-          console.error(`Quote failed for ${pos.ticker}:`, error);
-          failures.push(pos.ticker);
-        }
-      }
+// ─── INIT ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (apiKey) {
+    document.getElementById('apiSetup').classList.remove('visible');
+    fetchAll();
+  }
+  // Show setup if no key stored
+});
+</script>
 
-      renderAll();
-
-      if (successes.length && !failures.length) {
-        pillMarket.textContent = "Market data: live";
-        pillUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
-        statusResult.textContent = `Loaded ${successes.length} live quotes successfully`;
-      } else if (successes.length && failures.length) {
-        pillMarket.textContent = "Market data: partial";
-        pillUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
-        statusResult.textContent = `Loaded ${successes.length} quotes, failed ${failures.length}: ${failures.join(", ")}`;
-      } else {
-        pillMarket.textContent = "Market data: error";
-        pillUpdated.textContent = "Last updated: refresh failed";
-        statusResult.textContent = "No live quotes loaded";
-      }
-    }
-
-    function startAutoRefresh() {
-      clearInterval(timer);
-      timer = setInterval(() => {
-        if (autoRefresh) refreshQuotes();
-      }, REFRESH_MS);
-    }
-
-    document.getElementById("refreshBtn").addEventListener("click", async () => {
-      await refreshQuotes();
-      await buildPerformanceChart();
-    });
-
-    document.getElementById("toggleAutoBtn").addEventListener("click", () => {
-      autoRefresh = !autoRefresh;
-      document.getElementById("statusAuto").textContent = autoRefresh ? "On" : "Paused";
-      document.getElementById("toggleAutoBtn").textContent = autoRefresh ? "Pause auto-refresh" : "Resume auto-refresh";
-    });
-
-    renderAll();
-
-    (async function init() {
-      await refreshQuotes();
-      await buildPerformanceChart();
-      startAutoRefresh();
-    })();
-  </script>
 </body>
 </html>
