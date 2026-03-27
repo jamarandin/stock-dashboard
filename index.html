@@ -1,634 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Defense & AI Portfolio Tracker</title>
-  <style>
-    :root {
-      --bg: #071126;
-      --panel: #0d1b3a;
-      --panel-2: #102247;
-      --text: #edf2ff;
-      --muted: #a9b8df;
-      --line: rgba(255,255,255,0.08);
-      --green: #34d399;
-      --red: #f87171;
-      --blue: #60a5fa;
-      --chip: rgba(255,255,255,0.06);
-      --shadow: 0 20px 50px rgba(0,0,0,0.35);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Defense & AI Portfolio Tracker</title>
 
-    * { box-sizing: border-box; }
+<style>
+body {
+  margin:0;
+  font-family:system-ui;
+  background:#06122a;
+  color:#fff;
+}
 
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 28%),
-        radial-gradient(circle at top right, rgba(99,102,241,0.16), transparent 30%),
-        linear-gradient(180deg, #050c1e 0%, #071126 100%);
-      color: var(--text);
-      min-height: 100vh;
-    }
+.wrap {
+  max-width:1200px;
+  margin:auto;
+  padding:30px;
+}
 
-    .wrap {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 36px 24px 56px;
-    }
+h1 { font-size:32px; margin-bottom:10px; }
 
-    .hero h1 {
-      margin: 0 0 10px;
-      font-size: 3rem;
-      line-height: 1;
-      letter-spacing: -0.03em;
-    }
+.sub { color:#aab; margin-bottom:20px; }
 
-    .hero p {
-      margin: 0;
-      max-width: 960px;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.55;
-    }
+.card {
+  background:#0c1e44;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+}
 
-    .chips {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
 
-    .chip {
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--chip);
-      color: var(--muted);
-      border: 1px solid var(--line);
-      font-size: 0.92rem;
-    }
+.metric { font-size:28px; font-weight:bold; }
 
-    .toolbar {
-      margin-top: 22px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.positive { color:#34d399; }
+.negative { color:#f87171; }
 
-    button {
-      appearance: none;
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
 
-    button:hover { transform: translateY(-1px); }
+th, td {
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  text-align:left;
+}
 
-    .primary {
-      background: linear-gradient(135deg, #60a5fa, #3b82f6);
-      color: white;
-      box-shadow: var(--shadow);
-    }
+button {
+  padding:10px 14px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  margin-right:10px;
+}
 
-    .secondary {
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
+.primary { background:#3b82f6; color:white; }
+.secondary { background:#222; color:white; }
 
-    .grid {
-      display: grid;
-      gap: 16px;
-      margin-top: 28px;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 0.98rem;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    .metric {
-      font-size: 2.25rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 8px;
-    }
-
-    .sub {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .positive { color: var(--green); }
-    .negative { color: var(--red); }
-
-    .main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.9fr) minmax(320px, 0.95fr);
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 18px;
-    }
-
-    .section-title h2 {
-      margin: 0;
-      font-size: 1.4rem;
-      letter-spacing: -0.02em;
-    }
-
-    .section-title p {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .status-box {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 0.94rem;
-      align-items: flex-start;
-    }
-
-    .status-row strong {
-      color: var(--text);
-      font-weight: 700;
-      text-align: right;
-    }
-
-    .status-note {
-      margin-top: 14px;
-      padding: 12px 14px;
-      background: rgba(96, 165, 250, 0.08);
-      border: 1px solid rgba(96, 165, 250, 0.18);
-      color: #dbeafe;
-      border-radius: 14px;
-      font-size: 0.9rem;
-      line-height: 1.45;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 18px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 980px;
-    }
-
-    thead th {
-      text-align: left;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 0 10px 12px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    tbody td {
-      padding: 14px 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.97rem;
-    }
-
-    tbody tr:hover {
-      background: rgba(255,255,255,0.02);
-    }
-
-    .ticker {
-      font-weight: 800;
-      letter-spacing: 0.02em;
-    }
-
-    .alloc-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 10px;
-    }
-
-    .alloc-item {
-      display: grid;
-      gap: 8px;
-    }
-
-    .alloc-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 0.94rem;
-    }
-
-    .alloc-bar {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden;
-    }
-
-    .alloc-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #60a5fa, #34d399);
-      width: 0%;
-    }
-
-    .empty-state {
-      color: var(--muted);
-      font-size: 0.92rem;
-      padding-top: 8px;
-    }
-
-    @media (max-width: 1100px) {
-      .grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .main {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .wrap { padding: 24px 16px 40px; }
-      .hero h1 { font-size: 2.2rem; }
-      .grid { grid-template-columns: 1fr; }
-      .metric { font-size: 1.85rem; }
-    }
-  </style>
+.status {
+  font-size:14px;
+  margin-top:10px;
+  color:#aaa;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <h1>Defense &amp; AI Portfolio Tracker</h1>
-      <p>
-        Live tracking of positions aligned to defense spending, AI infrastructure, and geopolitical momentum.
-        This dashboard pulls current market data, recalculates your portfolio in real time, and shows how your
-        defense and AI thesis is performing across holdings.
-      </p>
 
-      <div class="chips">
-        <div class="chip" id="marketStatusChip">Market data: connecting...</div>
-        <div class="chip" id="lastUpdatedChip">Last updated: --</div>
-        <div class="chip">7 positions</div>
-        <div class="chip">Thesis: Defense + AI + war-driven demand</div>
-      </div>
+<div class="wrap">
 
-      <div class="toolbar">
-        <button class="primary" id="refreshBtn">Refresh now</button>
-        <button class="secondary" id="toggleAutoBtn">Pause auto-refresh</button>
-      </div>
-    </section>
+<h1>Defense & AI Portfolio Tracker</h1>
 
-    <section class="grid">
-      <div class="card">
-        <h3>Portfolio market value</h3>
-        <div class="metric" id="portfolioValue">$0.00</div>
-        <div class="sub" id="portfolioCostBasis">Cost basis: $0.00</div>
-      </div>
+<div class="sub">
+Tracking positions aligned to defense, AI infrastructure, and geopolitical momentum.
+</div>
 
-      <div class="card">
-        <h3>Unrealized gain / loss</h3>
-        <div class="metric" id="totalPnL">$0.00</div>
-        <div class="sub" id="totalPnLPct">0.00%</div>
-      </div>
+<button class="primary" onclick="refreshQuotes()">Refresh now</button>
+<button class="secondary" onclick="toggleAuto()">Toggle auto-refresh</button>
 
-      <div class="card">
-        <h3>Best position</h3>
-        <div class="metric" id="bestPositionTicker">--</div>
-        <div class="sub" id="bestPositionDetail">--</div>
-      </div>
+<div class="status" id="status">Connecting...</div>
 
-      <div class="card">
-        <h3>Largest allocation</h3>
-        <div class="metric" id="largestAllocationTicker">--</div>
-        <div class="sub" id="largestAllocationDetail">--</div>
-      </div>
-    </section>
+<div class="grid">
 
-    <section class="main">
-      <div class="card">
-        <div class="section-title">
-          <div>
-            <h2>Your positions</h2>
-            <p>Current prices, market value, and unrealized gain/loss versus your average cost.</p>
-          </div>
-        </div>
+<div class="card">
+<div>Portfolio Value</div>
+<div class="metric" id="value">$0</div>
+</div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th>Shares</th>
-                <th>Avg Cost</th>
-                <th>Current Price</th>
-                <th>Market Value</th>
-                <th>Cost Basis</th>
-                <th>Gain / Loss</th>
-                <th>Gain / Loss %</th>
-                <th>Allocation</th>
-              </tr>
-            </thead>
-            <tbody id="positionsBody"></tbody>
-          </table>
-        </div>
-      </div>
+<div class="card">
+<div>Unrealized P/L</div>
+<div class="metric" id="pnl">$0</div>
+</div>
 
-      <div class="card">
-        <div class="section-title">
-          <div>
-            <h2>Portfolio status</h2>
-            <p>Live quote status, refresh behavior, and allocation mix.</p>
-          </div>
-        </div>
+<div class="card">
+<div>Best Position</div>
+<div class="metric" id="best">--</div>
+</div>
 
-        <div class="status-box">
-          <div class="status-row">
-            <span>Quote source</span>
-            <strong>Finnhub</strong>
-          </div>
-          <div class="status-row">
-            <span>Auto-refresh</span>
-            <strong id="autoRefreshStatus">On</strong>
-          </div>
-          <div class="status-row">
-            <span>Refresh interval</span>
-            <strong>2 minutes</strong>
-          </div>
-          <div class="status-row">
-            <span>Tracked tickers</span>
-            <strong>DRS, RTX, MRCY, LDOS, PLTR, AGH, UMAC</strong>
-          </div>
-          <div class="status-row">
-            <span>Last quote result</span>
-            <strong id="quoteResultStatus">Waiting for first refresh...</strong>
-          </div>
-        </div>
+<div class="card">
+<div>Largest Allocation</div>
+<div class="metric" id="largest">--</div>
+</div>
 
-        <div class="status-note" id="statusNote">
-          Live market data powered by Finnhub. Values update automatically and reflect current market conditions.
-        </div>
+</div>
 
-        <div style="margin-top: 22px;">
-          <h2 style="margin: 0 0 10px; font-size: 1.25rem;">Allocation by position</h2>
-          <div class="alloc-list" id="allocationList"></div>
-          <div class="empty-state" id="allocationEmpty" style="display:none;">Allocation will appear after quotes load.</div>
-        </div>
-      </div>
-    </section>
-  </div>
+<div class="card">
 
-  <script>
-    const FINNHUB_API_KEY = "PLTR&token=d73dm2hr01qjjol2lqq0d73dm2hr01qjjol2lqqg";
-    const REFRESH_MS = 120000;
+<h3>Your Positions</h3>
 
-    let autoRefreshEnabled = true;
-    let refreshTimer = null;
+<table>
+<thead>
+<tr>
+<th>Ticker</th>
+<th>Shares</th>
+<th>Avg Cost</th>
+<th>Price</th>
+<th>Value</th>
+<th>P/L</th>
+<th>P/L %</th>
+</tr>
+</thead>
 
-    const positions = [
-      { ticker: "DRS", shares: 5.400676, avgCost: 46.29 },
-      { ticker: "RTX", shares: 3.634664, avgCost: 192.59 },
-      { ticker: "MRCY", shares: 3.292506, avgCost: 75.93 },
-      { ticker: "LDOS", shares: 3.168075, avgCost: 157.82 },
-      { ticker: "PLTR", shares: 5.392289, avgCost: 148.36 },
-      { ticker: "AGH", shares: 62.131868, avgCost: 4.02 },
-      { ticker: "UMAC", shares: 15.757957, avgCost: 15.87 }
-    ].map(pos => ({
-      ...pos,
-      currentPrice: pos.avgCost,
-      marketValue: pos.shares * pos.avgCost,
-      costBasis: pos.shares * pos.avgCost,
-      gainLoss: 0,
-      gainLossPct: 0,
-      allocationPct: 0
-    }));
+<tbody id="table"></tbody>
 
-    const currency = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD"
-    });
+</table>
 
-    const pct = new Intl.NumberFormat("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+</div>
 
-    function formatMoney(value) {
-      return currency.format(value);
+</div>
+
+<script>
+
+// ✅ YOUR EXISTING KEY (we'll rotate later)
+const FINNHUB_API_KEY = "d73dm2hr01qjjol2lqq0d73dm2hr01qjjol2lqqg";
+
+const positions = [
+{ ticker:"DRS", shares:5.400676, avg:46.29 },
+{ ticker:"RTX", shares:3.634664, avg:192.59 },
+{ ticker:"MRCY", shares:3.292506, avg:75.93 },
+{ ticker:"LDOS", shares:3.168075, avg:157.82 },
+{ ticker:"PLTR", shares:5.392289, avg:148.36 },
+{ ticker:"AGH", shares:62.131868, avg:4.02 },
+{ ticker:"UMAC", shares:15.757957, avg:15.87 }
+];
+
+let auto = true;
+
+function fmt(x) { return "$" + x.toFixed(2); }
+
+async function getPrice(ticker) {
+  const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_API_KEY}&t=${Date.now()}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data.c) throw new Error("bad price");
+  return data.c;
+}
+
+async function refreshQuotes() {
+
+  document.getElementById("status").innerText = "Fetching live prices...";
+
+  let success = 0;
+
+  for (let p of positions) {
+    try {
+      p.price = await getPrice(p.ticker);
+      success++;
+    } catch (e) {
+      console.log("fail", p.ticker);
+      p.price = p.avg;
     }
+  }
 
-    function formatPct(value) {
-      const sign = value > 0 ? "+" : "";
-      return `${sign}${pct.format(value)}%`;
-    }
+  render();
 
-    function calculatePortfolio() {
-      let totalMarketValue = 0;
-      let totalCostBasis = 0;
+  document.getElementById("status").innerText =
+    success ? `Live (${success}/${positions.length})` : "Failed";
+}
 
-      positions.forEach(pos => {
-        pos.marketValue = pos.shares * pos.currentPrice;
-        pos.costBasis = pos.shares * pos.avgCost;
-        pos.gainLoss = pos.marketValue - pos.costBasis;
-        pos.gainLossPct = pos.costBasis === 0 ? 0 : (pos.gainLoss / pos.costBasis) * 100;
-        totalMarketValue += pos.marketValue;
-        totalCostBasis += pos.costBasis;
-      });
+function render() {
 
-      positions.forEach(pos => {
-        pos.allocationPct = totalMarketValue === 0 ? 0 : (pos.marketValue / totalMarketValue) * 100;
-      });
+  let totalValue = 0;
+  let totalCost = 0;
 
-      return {
-        totalMarketValue,
-        totalCostBasis,
-        totalGainLoss: totalMarketValue - totalCostBasis,
-        totalGainLossPct: totalCostBasis === 0 ? 0 : ((totalMarketValue - totalCostBasis) / totalCostBasis) * 100
-      };
-    }
+  positions.forEach(p => {
+    p.value = p.price * p.shares;
+    p.cost = p.avg * p.shares;
+    p.pnl = p.value - p.cost;
+    p.pct = (p.pnl / p.cost) * 100;
 
-    function renderDashboard() {
-      const summary = calculatePortfolio();
+    totalValue += p.value;
+    totalCost += p.cost;
+  });
 
-      document.getElementById("portfolioValue").textContent = formatMoney(summary.totalMarketValue);
-      document.getElementById("portfolioCostBasis").textContent = `Cost basis: ${formatMoney(summary.totalCostBasis)}`;
+  document.getElementById("value").innerText = fmt(totalValue);
 
-      const pnlEl = document.getElementById("totalPnL");
-      pnlEl.textContent = formatMoney(summary.totalGainLoss);
-      pnlEl.className = `metric ${summary.totalGainLoss >= 0 ? "positive" : "negative"}`;
+  const totalPnL = totalValue - totalCost;
+  const pnlEl = document.getElementById("pnl");
+  pnlEl.innerText = fmt(totalPnL);
+  pnlEl.className = "metric " + (totalPnL >= 0 ? "positive" : "negative");
 
-      const pnlPctEl = document.getElementById("totalPnLPct");
-      pnlPctEl.textContent = formatPct(summary.totalGainLossPct);
-      pnlPctEl.className = `sub ${summary.totalGainLossPct >= 0 ? "positive" : "negative"}`;
+  const best = [...positions].sort((a,b)=>b.pct-a.pct)[0];
+  document.getElementById("best").innerText = best.ticker;
 
-      const bestPosition = [...positions].sort((a, b) => b.gainLossPct - a.gainLossPct)[0];
-      document.getElementById("bestPositionTicker").textContent = bestPosition.ticker;
-      document.getElementById("bestPositionDetail").textContent =
-        `${formatPct(bestPosition.gainLossPct)} | ${formatMoney(bestPosition.gainLoss)}`;
+  const largest = [...positions].sort((a,b)=>b.value-a.value)[0];
+  document.getElementById("largest").innerText = largest.ticker;
 
-      const largestAllocation = [...positions].sort((a, b) => b.allocationPct - a.allocationPct)[0];
-      document.getElementById("largestAllocationTicker").textContent = largestAllocation.ticker;
-      document.getElementById("largestAllocationDetail").textContent =
-        `${pct.format(largestAllocation.allocationPct)}% of portfolio`;
+  const table = document.getElementById("table");
+  table.innerHTML = "";
 
-      const tbody = document.getElementById("positionsBody");
-      tbody.innerHTML = "";
+  positions.forEach(p => {
+    const tr = document.createElement("tr");
 
-      [...positions]
-        .sort((a, b) => b.marketValue - a.marketValue)
-        .forEach(pos => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><div class="ticker">${pos.ticker}</div></td>
-            <td>${pos.shares.toFixed(6)}</td>
-            <td>${formatMoney(pos.avgCost)}</td>
-            <td>${formatMoney(pos.currentPrice)}</td>
-            <td>${formatMoney(pos.marketValue)}</td>
-            <td>${formatMoney(pos.costBasis)}</td>
-            <td class="${pos.gainLoss >= 0 ? "positive" : "negative"}">${formatMoney(pos.gainLoss)}</td>
-            <td class="${pos.gainLossPct >= 0 ? "positive" : "negative"}">${formatPct(pos.gainLossPct)}</td>
-            <td>${pct.format(pos.allocationPct)}%</td>
-          `;
-          tbody.appendChild(tr);
-        });
+    tr.innerHTML = `
+      <td>${p.ticker}</td>
+      <td>${p.shares.toFixed(2)}</td>
+      <td>${fmt(p.avg)}</td>
+      <td>${fmt(p.price)}</td>
+      <td>${fmt(p.value)}</td>
+      <td class="${p.pnl>=0?"positive":"negative"}">${fmt(p.pnl)}</td>
+      <td class="${p.pct>=0?"positive":"negative"}">${p.pct.toFixed(2)}%</td>
+    `;
 
-      const allocationList = document.getElementById("allocationList");
-      const allocationEmpty = document.getElementById("allocationEmpty");
-      allocationList.innerHTML = "";
+    table.appendChild(tr);
+  });
+}
 
-      if (!positions.length) {
-        allocationEmpty.style.display = "block";
-      } else {
-        allocationEmpty.style.display = "none";
-      }
+function toggleAuto() {
+  auto = !auto;
+}
 
-      [...positions]
-        .sort((a, b) => b.allocationPct - a.allocationPct)
-        .forEach(pos => {
-          const item = document.createElement("div");
-          item.className = "alloc-item";
-          item.innerHTML = `
-            <div class="alloc-top">
-              <span><strong>${pos.ticker}</strong> ${formatMoney(pos.marketValue)}</span>
-              <span>${pct.format(pos.allocationPct)}%</span>
-            </div>
-            <div class="alloc-bar">
-              <div class="alloc-fill" style="width:${Math.max(0, Math.min(pos.allocationPct, 100))}%"></div>
-            </div>
-          `;
-          allocationList.appendChild(item);
-        });
-    }
+setInterval(() => {
+  if (auto) refreshQuotes();
+}, 120000);
 
-    async function fetchQuote(ticker) {
-      const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${d73dm2hr01qjjol2lqq0d73dm2hr01qjjol2lqqg}&t=${Date.now()}`;
-      const response = await fetch(url, { cache: "no-store" });
+refreshQuotes();
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} for ${ticker}`);
-      }
+</script>
 
-      const data = await response.json();
-
-      if (!data || typeof data.c !== "number" || data.c <= 0) {
-        throw new Error(`Invalid quote for ${ticker}`);
-      }
-
-      return data.c;
-    }
-
-    async function refreshQuotes() {
-      const marketStatusChip = document.getElementById("marketStatusChip");
-      const lastUpdatedChip = document.getElementById("lastUpdatedChip");
-      const quoteResultStatus = document.getElementById("quoteResultStatus");
-
-      marketStatusChip.textContent = "Market data: refreshing...";
-      quoteResultStatus.textContent = "Fetching quotes...";
-
-      const successes = [];
-      const failures = [];
-
-      for (const pos of positions) {
-        try {
-          const price = await fetchQuote(pos.ticker);
-          pos.currentPrice = price;
-          successes.push(`${pos.ticker} ${price}`);
-        } catch (error) {
-          console.error(`Quote failed for ${pos.ticker}:`, error);
-          failures.push(pos.ticker);
-        }
-      }
-
-      renderDashboard();
-
-      if (successes.length > 0) {
-        marketStatusChip.textContent = failures.length ? "Market data: partial" : "Market data: live";
-        lastUpdatedChip.textContent = `Last updated: ${new Date().toLocaleString()}`;
-        quoteResultStatus.textContent = failures.length
-          ? `Loaded ${successes.length} quotes, failed ${failures.length}: ${failures.join(", ")}`
-          : `Loaded ${successes.length} live quotes successfully`;
-      } else {
-        marketStatusChip.textContent = "Market data: error";
-        lastUpdatedChip.textContent = "Last updated: refresh failed";
-        quoteResultStatus.textContent = "No live quotes loaded";
-      }
-    }
-
-    function startAutoRefresh() {
-      clearInterval(refreshTimer);
-      refreshTimer = setInterval(() => {
-        if (autoRefreshEnabled) {
-          refreshQuotes();
-        }
-      }, REFRESH_MS);
-    }
-
-    document.getElementById("refreshBtn").addEventListener("click", refreshQuotes);
-
-    document.getElementById("toggleAutoBtn").addEventListener("click", () => {
-      autoRefreshEnabled = !autoRefreshEnabled;
-      document.getElementById("autoRefreshStatus").textContent = autoRefreshEnabled ? "On" : "Paused";
-      document.getElementById("toggleAutoBtn").textContent = autoRefreshEnabled ? "Pause auto-refresh" : "Resume auto-refresh";
-    });
-
-    renderDashboard();
-    refreshQuotes();
-    startAutoRefresh();
-  </script>
 </body>
 </html>
